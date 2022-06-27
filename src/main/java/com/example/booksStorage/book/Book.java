@@ -48,5 +48,3 @@ public final class Book extends Item {
             throw new IllegalArgumentException();
     }
 }
-
-//curl -X POST localhost:8080/books -H "Content-Type: application/json" -d '{"summary": "Some value", "numberOfPages": 3, "releaseDate": "1998-05-23", "registrationDate": "1998-05-23", "title": "Some value", "author": "Some value", "publisher": "Some value", "edition": "Some value"}'
