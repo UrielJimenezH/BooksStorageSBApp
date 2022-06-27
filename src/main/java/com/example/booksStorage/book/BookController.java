@@ -10,10 +10,10 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/books")
 public class BookController {
-    private final BookServiceStub service;
+    private final BookService service;
 
     @Autowired
-    public BookController(BookServiceStub service) {
+    public BookController(BookService service) {
         this.service = service;
     }
 

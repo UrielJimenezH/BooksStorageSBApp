@@ -1,16 +1,23 @@
 package com.example.booksStorage.book;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.repository.Repository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class BookServiceStub {
-    private final Map<Long, Item> books =  new HashMap<>();
+public class BookService {
+    private final Repository<Long, Item> repository;
+
+    @Autowired
+    public BookService(Repository<Long, Item> repository) {
+        this.repository = repository;
+    }
 
     public List<Book> getAllBooks() {
-        return books.values()
+        return repository.getAll()
                 .stream()
                 .filter(item -> item instanceof Book)
                 .map(item -> (Book) item)
@@ -18,18 +25,18 @@ public class BookServiceStub {
     }
 
     public Optional<Book> getBook(Long bookId) {
-        return Optional.ofNullable(books.get(bookId))
+        return repository.get(bookId)
                 .filter(item -> item instanceof Book)
                 .map(item -> (Book) item);
     }
 
     public Book addBook(Book book) {
-        books.put(book.getId(), book);
+        repository.save(book.getId(), book);
         return book;
     }
 
     public Optional<Book> updateBook(Long bookId, Book newBook) {
-        Optional<Book> book = Optional.ofNullable(books.get(bookId))
+        Optional<Book> book = repository.get(bookId)
                 .filter(item -> item instanceof Book)
                 .map(item -> (Book) item);
 
@@ -38,11 +45,11 @@ public class BookServiceStub {
 
         newBook.setId(bookId);
         newBook.setRegistrationDate(book.get().getRegistrationDate());
-        books.put(bookId, newBook);
+        repository.update(bookId, newBook);
         return Optional.of(newBook);
     }
 
     public void deleteBook(Long bookId) {
-        books.remove(bookId);
+        repository.delete(bookId);
     }
 }
