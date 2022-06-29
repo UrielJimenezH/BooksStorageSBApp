@@ -25,32 +25,32 @@ public class MagazineService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Magazine> get(Long bookId) {
-        return repository.get(bookId)
+    public Optional<Magazine> get(Long magazineId) {
+        return repository.get(magazineId)
                 .filter(item -> item instanceof Magazine)
                 .map(item -> (Magazine) item);
     }
 
-    public Magazine add(Magazine book) {
-        repository.save(book.getId(), book);
-        return book;
+    public Magazine add(Magazine magazine) {
+        repository.save(magazine.getId(), magazine);
+        return magazine;
     }
 
-    public Optional<Magazine> update(Long bookId, Magazine newMagazine) {
-        Optional<Magazine> book = repository.get(bookId)
+    public Optional<Magazine> update(Long magazineId, Magazine newMagazine) {
+        Optional<Magazine> magazine = repository.get(magazineId)
                 .filter(item -> item instanceof Magazine)
                 .map(item -> (Magazine) item);
 
-        if (book.isEmpty())
+        if (magazine.isEmpty())
             return Optional.empty();
 
-        newMagazine.setId(bookId);
-        newMagazine.setRegistrationDate(book.get().getRegistrationDate());
-        repository.update(bookId, newMagazine);
+        newMagazine.setId(magazineId);
+        newMagazine.setRegistrationDate(magazine.get().getRegistrationDate());
+        repository.update(magazineId, newMagazine);
         return Optional.of(newMagazine);
     }
 
-    public void delete(Long bookId) {
-        repository.delete(bookId);
+    public void delete(Long magazineId) {
+        repository.delete(magazineId);
     }
 }
