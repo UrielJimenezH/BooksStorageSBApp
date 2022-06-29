@@ -1,6 +1,8 @@
 package com.example.booksStorage.newspaper;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.observer.BasePublisher;
+import com.example.booksStorage.observer.Subscriber;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,12 +11,16 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class NewspaperService {
+public class NewspaperService extends BasePublisher<Item> {
     private final Repository<Long, Item> repository;
 
     @Autowired
-    public NewspaperService(Repository<Long, Item> repository) {
+    public NewspaperService(
+            Repository<Long, Item> repository,
+            Subscriber<Item> subscriber
+    ) {
         this.repository = repository;
+        subscribe(subscriber);
     }
 
     public List<Newspaper> getAll() {
@@ -33,6 +39,7 @@ public class NewspaperService {
 
     public Newspaper add(Newspaper newspaper) {
         repository.save(newspaper.getId(), newspaper);
+        notifySubscribers(newspaper);
         return newspaper;
     }
 
