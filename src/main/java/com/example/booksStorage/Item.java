@@ -1,5 +1,6 @@
 package com.example.booksStorage;
 
+import com.example.booksStorage.validations.*;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -16,38 +17,43 @@ public abstract class Item {
 
     private static long nextId = 1;
 
+    /**Validators using Chain of Responsibility*/
+    private static Validator<String> stringValidator = new NonNullValidator<>(
+            new NonBlankStringValidator(
+                    new StringLengthValidator(5, 30)
+            )
+    );
+
+    private static Validator<Integer> minimumNumberOfPagesValidator = new NonNullValidator<>(
+            new MinimumNumberOfPagesValidator(3)
+    );
+    
+    private static Validator<LocalDate> previousToCurrentDateValidator = new NonNullValidator<>(
+            new PreviousToCurrentDateValidator()
+    );
+
     public Item(
             String summary,
             int numberOfPages,
             LocalDate releaseDate
     ) {
-        validate(summary, numberOfPages, releaseDate);
-
         this.id = nextId++;
-        this.summary = summary;
-        this.numberOfPages = numberOfPages;
-        this.releaseDate = releaseDate;
+        this.summary = validate(summary);
+        this.numberOfPages = validate(numberOfPages);
+        this.releaseDate = validate(releaseDate);
 
         this.registrationDate = LocalDate.now();
     }
 
-    private void validate(String summary, int numberOfPages, LocalDate releaseDate) {
-        requireNonNullParams(summary, numberOfPages, releaseDate);
-
-        if (summary.isBlank())
-            throw new IllegalArgumentException();
-
-        if (numberOfPages < 1)
-            throw new IllegalArgumentException("Invalid number of pages: " + numberOfPages);
-
-        if (releaseDate.isAfter(LocalDate.now()))
-            throw new IllegalArgumentException();
+    protected String validate(String string) {
+        return stringValidator.validate(string);
     }
 
-    protected void requireNonNullParams(Object... arrayOfObj) {
-        for (Object obj: arrayOfObj) {
-            if (obj == null)
-                throw new IllegalArgumentException();
-        }
+    protected Integer validate(Integer num) {
+        return minimumNumberOfPagesValidator.validate(num);
+    }
+
+    protected LocalDate validate(LocalDate date) {
+        return previousToCurrentDateValidator.validate(date);
     }
 }

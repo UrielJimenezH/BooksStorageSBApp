@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public final class Letter extends Item {
     private String author;
@@ -21,15 +21,7 @@ public final class Letter extends Item {
             String author
     ) {
         super(summary, numberOfPages, releaseDate);
-        validateParams(author);
 
-        this.author = author;
-    }
-
-    private void validateParams(String author) {
-        requireNonNullParams(author);
-
-        if (author.isBlank())
-            throw new IllegalArgumentException();
+        this.author = validate(author);
     }
 }
