@@ -16,7 +16,7 @@ public class BookService {
         this.repository = repository;
     }
 
-    public List<Book> getAllBooks() {
+    public List<Book> getAll() {
         return repository.getAll()
                 .stream()
                 .filter(item -> item instanceof Book)
@@ -24,18 +24,18 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Book> getBook(Long bookId) {
+    public Optional<Book> get(Long bookId) {
         return repository.get(bookId)
                 .filter(item -> item instanceof Book)
                 .map(item -> (Book) item);
     }
 
-    public Book addBook(Book book) {
+    public Book add(Book book) {
         repository.save(book.getId(), book);
         return book;
     }
 
-    public Optional<Book> updateBook(Long bookId, Book newBook) {
+    public Optional<Book> update(Long bookId, Book newBook) {
         Optional<Book> book = repository.get(bookId)
                 .filter(item -> item instanceof Book)
                 .map(item -> (Book) item);
@@ -49,7 +49,14 @@ public class BookService {
         return Optional.of(newBook);
     }
 
-    public void deleteBook(Long bookId) {
-        repository.delete(bookId);
+    public Optional<Book> delete(Long bookId) {
+        Optional<Book> bookFound = repository.get(bookId)
+                .filter(item -> item instanceof Book)
+                .map(item -> (Book) item);
+
+        if (bookFound.isPresent())
+            repository.delete(bookId);
+
+        return bookFound;
     }
 }

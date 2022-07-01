@@ -1,5 +1,6 @@
 package com.example.booksStorage.letters;
 
+import com.example.booksStorage.book.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,12 @@ public class LetterController {
     }
 
     @DeleteMapping("{letterId}")
-    public void delete(@PathVariable("letterId") Long letterId) {
-        service.delete(letterId);
+    public ResponseEntity<?> delete(@PathVariable("letterId") Long letterId) {
+        Optional<Letter> opLetter = service.delete(letterId);
+
+        if (opLetter.isPresent())
+            return ResponseEntity.ok(opLetter.get());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Letter with id " + letterId + " does not exist");
     }
 }

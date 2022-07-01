@@ -50,7 +50,14 @@ public class MagazineService {
         return Optional.of(newMagazine);
     }
 
-    public void delete(Long magazineId) {
-        repository.delete(magazineId);
+    public Optional<Magazine> delete(Long magazineId) {
+        Optional<Magazine> magazineFound = repository.get(magazineId)
+                .filter(item -> item instanceof Magazine)
+                .map(item -> (Magazine) item);
+
+        if (magazineFound.isPresent())
+            repository.delete(magazineId);
+
+        return magazineFound;
     }
 }

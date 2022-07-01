@@ -50,7 +50,14 @@ public class NewspaperService {
         return Optional.of(newNewspaper);
     }
 
-    public void delete(Long newspaperId) {
-        repository.delete(newspaperId);
+    public Optional<Newspaper> delete(Long newspaperId) {
+        Optional<Newspaper> newspaperFound = repository.get(newspaperId)
+                .filter(item -> item instanceof Newspaper)
+                .map(item -> (Newspaper) item);
+
+        if (newspaperFound.isPresent())
+            repository.delete(newspaperId);
+
+        return newspaperFound;
     }
 }

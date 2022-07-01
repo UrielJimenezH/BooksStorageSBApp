@@ -1,5 +1,6 @@
 package com.example.booksStorage.magazine;
 
+import com.example.booksStorage.book.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +52,12 @@ public class MagazineController {
     }
 
     @DeleteMapping("{magazineId}")
-    public void delete(@PathVariable("magazineId") Long magazineId) {
-        service.delete(magazineId);
+    public ResponseEntity<?> delete(@PathVariable("magazineId") Long magazineId) {
+        Optional<Magazine> opMagazine = service.delete(magazineId);
+
+        if (opMagazine.isPresent())
+            return ResponseEntity.ok(opMagazine.get());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Magazine with id " + magazineId + " does not exist");
     }
 }

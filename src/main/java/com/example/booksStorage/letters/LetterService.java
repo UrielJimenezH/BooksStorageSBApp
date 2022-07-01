@@ -50,7 +50,14 @@ public class LetterService {
         return Optional.of(newLetter);
     }
 
-    public void delete(Long letterId) {
-        repository.delete(letterId);
+    public Optional<Letter> delete(Long letterId) {
+        Optional<Letter> letterFound = repository.get(letterId)
+                .filter(item -> item instanceof Letter)
+                .map(item -> (Letter) item);
+
+        if (letterFound.isPresent())
+            repository.delete(letterId);
+
+        return letterFound;
     }
 }

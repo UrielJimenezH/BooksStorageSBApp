@@ -19,12 +19,12 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<Book>> getAllBooks() {
-        return ResponseEntity.ok(service.getAllBooks());
+        return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("{bookId}")
     public ResponseEntity<?> getBook(@PathVariable("bookId") Long bookId) {
-         Optional<Book> opBook = service.getBook(bookId);
+         Optional<Book> opBook = service.get(bookId);
 
          if (opBook.isPresent())
              return ResponseEntity.ok(opBook.get());
@@ -34,7 +34,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
-        return ResponseEntity.ok(service.addBook(book));
+        return ResponseEntity.ok(service.add(book));
     }
 
     @PutMapping("{bookId}")
@@ -42,7 +42,7 @@ public class BookController {
             @PathVariable("bookId") Long bookId,
             @RequestBody Book book
     ) {
-        Optional<Book> opBook = service.updateBook(bookId, book);
+        Optional<Book> opBook = service.update(bookId, book);
 
         if (opBook.isPresent())
             return ResponseEntity.ok(opBook.get());
@@ -51,7 +51,12 @@ public class BookController {
     }
 
     @DeleteMapping("{bookId}")
-    public void deleteBook(@PathVariable("bookId") Long bookId) {
-        service.deleteBook(bookId);
+    public ResponseEntity<?> deleteBook(@PathVariable("bookId") Long bookId) {
+        Optional<Book> opBook = service.delete(bookId);
+
+        if (opBook.isPresent())
+            return ResponseEntity.ok(opBook.get());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with id " + bookId + " does not exist");
     }
 }
