@@ -1,5 +1,8 @@
 package com.example.booksStorage.validations;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class NonNullValidator<T> extends BaseValidator<T> {
     public NonNullValidator(Validator<T> next) {
         super(next);

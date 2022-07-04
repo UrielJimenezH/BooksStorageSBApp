@@ -1,7 +1,9 @@
 package com.example.booksStorage.validations;
 
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
+@NoArgsConstructor
 public class PreviousToCurrentDateValidator extends BaseValidator<LocalDate> {
     @Override
     public LocalDate validate(LocalDate date) {
