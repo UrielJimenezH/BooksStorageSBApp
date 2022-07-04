@@ -3,23 +3,30 @@ package com.example.booksStorage.validations;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class StringLengthValidator extends BaseValidator<String> {
+public class StringLengthValidator extends BaseValidator {
     private int minLength;
     private int maxLength;
 
     public StringLengthValidator(
             int minLength,
             int maxLength,
-            Validator<String> next
+            Validator next
     ) {
         super(next);
+        this.minLength = minLength;
+        this.maxLength = maxLength;
     }
 
     @Override
-    public String validate(String data) {
-        if (data.length() < minLength || data.length() > maxLength)
-            throw new IllegalArgumentException("String length outside bounds");
-        else
+    public Object validate(Object data) {
+        if (!(data instanceof String))
             return super.validate(data);
+
+        String str = (String) data;
+
+        if (str.length() < minLength || str.length() > maxLength)
+            throw new IllegalArgumentException("String length outside bounds");
+
+        return super.validate(data);
     }
 }

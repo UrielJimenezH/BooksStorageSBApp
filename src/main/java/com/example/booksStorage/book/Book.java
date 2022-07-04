@@ -1,6 +1,7 @@
 package com.example.booksStorage.book;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.validations.Validations;
 import lombok.*;
 import java.time.LocalDate;
 
@@ -25,9 +26,9 @@ public final class Book extends Item {
     ) {
         super(summary, numberOfPages, releaseDate);
 
-        this.title = validate(title);
-        this.author = validate(author);
-        this.publisher = validate(publisher);
-        this.edition = validate(edition);
+        this.title = Validations.validate(title);
+        this.author = Validations.validate(author);
+        this.publisher = Validations.validate(publisher);
+        this.edition = Validations.validate(edition);
     }
 }

@@ -5,16 +5,16 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class BaseValidator<T> implements Validator<T> {
-    private Validator<T> next;
+public abstract class BaseValidator implements Validator {
+    private Validator next;
 
     @Override
-    public void setNext(Validator<T> validator) {
+    public void setNext(Validator validator) {
         this.next = validator;
     }
 
     @Override
-    public T validate(T data) {
+    public Object validate(Object data) {
         if (next != null)
             return next.validate(data);
         else

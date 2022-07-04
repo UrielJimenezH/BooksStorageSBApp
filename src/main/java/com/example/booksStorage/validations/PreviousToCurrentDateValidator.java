@@ -4,10 +4,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @NoArgsConstructor
-public class PreviousToCurrentDateValidator extends BaseValidator<LocalDate> {
+public class PreviousToCurrentDateValidator extends BaseValidator {
+    public PreviousToCurrentDateValidator(Validator next) {
+        super(next);
+    }
+
     @Override
-    public LocalDate validate(LocalDate date) {
-        if (date.isAfter(LocalDate.now()))
+    public Object validate(Object date) {
+        if (date instanceof LocalDate && ((LocalDate) date).isAfter(LocalDate.now()))
             throw new IllegalArgumentException();
 
         return super.validate(date);

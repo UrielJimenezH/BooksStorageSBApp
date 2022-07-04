@@ -5,18 +5,18 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class MinimumNumberOfPagesValidator extends BaseValidator<Integer> {
+public class MinimumNumberOfPagesValidator extends BaseValidator {
     private int minNumberOfPages = 10;
 
-    public MinimumNumberOfPagesValidator(int minNumberOfPages, Validator<Integer> next) {
+    public MinimumNumberOfPagesValidator(int minNumberOfPages, Validator next) {
         super(next);
         this.minNumberOfPages = minNumberOfPages;
     }
     @Override
-    public Integer validate(Integer data) {
-        if (data < minNumberOfPages)
+    public Object validate(Object data) {
+        if (data instanceof Integer && (Integer) data < minNumberOfPages)
             throw new IllegalArgumentException("Invalid number of pages");
-        else
-            return super.validate(data);
+
+        return super.validate(data);
     }
 }

@@ -17,20 +17,7 @@ public abstract class Item {
 
     private static long nextId = 1;
 
-    /**Validators using Chain of Responsibility*/
-    private static Validator<String> stringValidator = new NonNullValidator<>(
-            new NonBlankStringValidator(
-                    new StringLengthValidator(5, 30)
-            )
-    );
-
-    private static Validator<Integer> minimumNumberOfPagesValidator = new NonNullValidator<>(
-            new MinimumNumberOfPagesValidator(3)
-    );
-    
-    private static Validator<LocalDate> previousToCurrentDateValidator = new NonNullValidator<>(
-            new PreviousToCurrentDateValidator()
-    );
+//    protected static Validations validations = new Validations();
 
     public Item(
             String summary,
@@ -38,22 +25,10 @@ public abstract class Item {
             LocalDate releaseDate
     ) {
         this.id = nextId++;
-        this.summary = validate(summary);
-        this.numberOfPages = validate(numberOfPages);
-        this.releaseDate = validate(releaseDate);
+        this.summary = Validations.validate(summary);
+        this.numberOfPages = Validations.validate(numberOfPages);
+        this.releaseDate = Validations.validate(releaseDate);
 
         this.registrationDate = LocalDate.now();
-    }
-
-    protected String validate(String string) {
-        return stringValidator.validate(string);
-    }
-
-    protected Integer validate(Integer num) {
-        return minimumNumberOfPagesValidator.validate(num);
-    }
-
-    protected LocalDate validate(LocalDate date) {
-        return previousToCurrentDateValidator.validate(date);
     }
 }

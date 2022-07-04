@@ -1,6 +1,7 @@
 package com.example.booksStorage.letters;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.validations.Validations;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,6 @@ public final class Letter extends Item {
     ) {
         super(summary, numberOfPages, releaseDate);
 
-        this.author = validate(author);
+        this.author = Validations.validate(author);
     }
 }

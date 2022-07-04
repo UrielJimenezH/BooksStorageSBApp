@@ -3,13 +3,13 @@ package com.example.booksStorage.validations;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class NonNullValidator<T> extends BaseValidator<T> {
-    public NonNullValidator(Validator<T> next) {
+public class NonNullValidator extends BaseValidator {
+    public NonNullValidator(Validator next) {
         super(next);
     }
 
     @Override
-    public T validate(T data) {
+    public Object validate(Object data) {
         if (data == null)
             throw new IllegalArgumentException("Null value passed");
         else

@@ -3,15 +3,15 @@ package com.example.booksStorage.validations;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
-public class NonBlankStringValidator extends BaseValidator<String> {
-    public NonBlankStringValidator(Validator<String> next) {
+public class NonBlankStringValidator extends BaseValidator {
+    public NonBlankStringValidator(Validator next) {
         super(next);
     }
     @Override
-    public String validate(String data) {
-        if (data.isBlank())
+    public Object validate(Object data) {
+        if (data instanceof String && ((String) data).isBlank())
             throw new IllegalArgumentException("Blank string");
-        else
-            return super.validate(data);
+
+        return super.validate(data);
     }
 }

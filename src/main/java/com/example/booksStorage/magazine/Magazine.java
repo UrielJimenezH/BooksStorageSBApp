@@ -1,6 +1,7 @@
 package com.example.booksStorage.magazine;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.validations.Validations;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +25,7 @@ public final class Magazine extends Item {
     ) {
         super(summary, numberOfPages, releaseDate);
 
-        this.title = validate(title);
-        this.publisher = validate(publisher);
+        this.title = Validations.validate(title);
+        this.publisher = Validations.validate(publisher);
     }
 }
