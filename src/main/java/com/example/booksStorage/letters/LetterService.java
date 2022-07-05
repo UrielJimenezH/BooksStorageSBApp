@@ -2,7 +2,7 @@ package com.example.booksStorage.letters;
 
 import com.example.booksStorage.Item;
 import com.example.booksStorage.observer.EventManager;
-import com.example.booksStorage.observer.Subscriber;
+import com.example.booksStorage.observer.EventManagerConfig;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +14,14 @@ import java.util.stream.Collectors;
 public class LetterService {
     private final Repository<Long, Item> repository;
     private final EventManager<Item> eventManager;
-    private final String CREATION_EVENT = "letterCreated";
 
     @Autowired
     public LetterService(
             Repository<Long, Item> repository,
-            EventManager<Item> eventManager,
-            Subscriber<Item> subscriber
+            EventManager<Item> eventManager
     ) {
         this.repository = repository;
         this.eventManager = eventManager;
-        eventManager.subscribe(CREATION_EVENT, subscriber);
     }
 
     public List<Letter> getAll() {
@@ -43,7 +40,7 @@ public class LetterService {
 
     public Letter add(Letter letter) {
         repository.save(letter.getId(), letter);
-        eventManager.notifySubscribers(CREATION_EVENT, letter);
+        eventManager.notifySubscribers(EventManagerConfig.LETTER_CREATION_EVENT, letter);
         return letter;
     }
 
