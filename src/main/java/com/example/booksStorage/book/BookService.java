@@ -1,7 +1,7 @@
 package com.example.booksStorage.book;
 
 import com.example.booksStorage.Item;
-import com.example.booksStorage.observer.BasePublisher;
+import com.example.booksStorage.observer.EventManager;
 import com.example.booksStorage.observer.Subscriber;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,16 +10,20 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class BookService extends BasePublisher<Item> {
+public class BookService {
     private final Repository<Long, Item> repository;
+    private final EventManager<Item> eventManager;
+    private final String CREATION_EVENT = "bookCreated";
 
     @Autowired
     public BookService(
             Repository<Long, Item> repository,
+            EventManager<Item> eventManager,
             Subscriber<Item> subscriber//Todo or PublicationNotifier<Item> PublicationNotifier ???
     ) {
         this.repository = repository;
-        subscribe(subscriber);
+        this.eventManager = eventManager;
+        eventManager.subscribe(CREATION_EVENT, subscriber);
     }
 
     public List<Book> getAll() {
@@ -38,7 +42,7 @@ public class BookService extends BasePublisher<Item> {
 
     public Book add(Book book) {
         repository.save(book.getId(), book);
-        notifySubscribers(book);
+        eventManager.notifySubscribers(CREATION_EVENT, book);
         return book;
     }
 

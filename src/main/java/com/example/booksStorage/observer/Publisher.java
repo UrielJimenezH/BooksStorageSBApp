@@ -2,7 +2,7 @@ package com.example.booksStorage.observer;
 
 
 public interface Publisher<T> {
-    void subscribe(Subscriber<T> subscriber);
-    void unsubscribe(Subscriber<T> subscriber);
-    void notifySubscribers(T data);
+    void subscribe(String event, Subscriber<T> subscriber);
+    void unsubscribe(String event, Subscriber<T> subscriber);
+    void notifySubscribers(String event, T data);
 }
