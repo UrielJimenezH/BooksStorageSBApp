@@ -3,6 +3,7 @@ package com.example.booksStorage.magazine;
 import com.example.booksStorage.Item;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class MagazineService {
     private final Repository<Long, Item> repository;
 
     @Autowired
-    public MagazineService(Repository<Long, Item> repository) {
+    public MagazineService(@Qualifier("treeMapRepository") Repository<Long, Item> repository) {
         this.repository = repository;
     }
 

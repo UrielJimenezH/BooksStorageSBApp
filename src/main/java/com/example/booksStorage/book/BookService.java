@@ -3,6 +3,7 @@ package com.example.booksStorage.book;
 import com.example.booksStorage.Item;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ public class BookService {
     private final Repository<Long, Item> repository;
 
     @Autowired
-    public BookService(Repository<Long, Item> repository) {
+    public BookService(@Qualifier("treeMapRepository") Repository<Long, Item> repository) {
         this.repository = repository;
     }
 
