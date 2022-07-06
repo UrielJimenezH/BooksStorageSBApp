@@ -1,12 +1,9 @@
 package com.example.booksStorage.newspaper;
 
-import com.example.booksStorage.book.Book;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/newspapers")
@@ -25,12 +22,7 @@ public class NewspaperController {
 
     @GetMapping("{newspaperId}")
     public ResponseEntity<?> get(@PathVariable("newspaperId") Long newspaperId) {
-         Optional<Newspaper> opNewspaper = service.get(newspaperId);
-
-         if (opNewspaper.isPresent())
-             return ResponseEntity.ok(opNewspaper.get());
-
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Newspaper with id " + newspaperId + " does not exist");
+        return ResponseEntity.ok(service.get(newspaperId));
     }
 
     @PostMapping
@@ -43,21 +35,11 @@ public class NewspaperController {
             @PathVariable("newspaperId") Long newspaperId,
             @RequestBody Newspaper newspaper
     ) {
-        Optional<Newspaper> opNewspaper = service.update(newspaperId, newspaper);
-
-        if (opNewspaper.isPresent())
-            return ResponseEntity.ok(opNewspaper.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Newspaper with id " + newspaperId + " does not exist");
+        return ResponseEntity.ok(service.update(newspaperId, newspaper));
     }
 
     @DeleteMapping("{newspaperId}")
     public ResponseEntity<?> delete(@PathVariable("newspaperId") Long newspaperId) {
-        Optional<Newspaper> opNewspaper = service.delete(newspaperId);
-
-        if (opNewspaper.isPresent())
-            return ResponseEntity.ok(opNewspaper.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Newspaper with id " + newspaperId + " does not exist");
+        return ResponseEntity.ok(service.delete(newspaperId));
     }
 }

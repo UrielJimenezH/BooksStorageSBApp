@@ -1,11 +1,9 @@
 package com.example.booksStorage.book;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/books")
@@ -24,12 +22,7 @@ public class BookController {
 
     @GetMapping("{bookId}")
     public ResponseEntity<?> getBook(@PathVariable("bookId") Long bookId) {
-         Optional<Book> opBook = service.get(bookId);
-
-         if (opBook.isPresent())
-             return ResponseEntity.ok(opBook.get());
-
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with id " + bookId + " does not exist");
+         return ResponseEntity.ok(service.get(bookId));
     }
 
     @PostMapping
@@ -42,21 +35,11 @@ public class BookController {
             @PathVariable("bookId") Long bookId,
             @RequestBody Book book
     ) {
-        Optional<Book> opBook = service.update(bookId, book);
-
-        if (opBook.isPresent())
-            return ResponseEntity.ok(opBook.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with id " + bookId + " does not exist");
+        return ResponseEntity.ok(service.update(bookId, book));
     }
 
     @DeleteMapping("{bookId}")
     public ResponseEntity<?> deleteBook(@PathVariable("bookId") Long bookId) {
-        Optional<Book> opBook = service.delete(bookId);
-
-        if (opBook.isPresent())
-            return ResponseEntity.ok(opBook.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book with id " + bookId + " does not exist");
+        return ResponseEntity.ok(service.delete(bookId));
     }
 }
