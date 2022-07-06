@@ -34,7 +34,7 @@ public class BookController {
 
     @PostMapping
     public ResponseEntity<Book> addBook(@RequestBody Book book) {
-        return ResponseEntity.ok(service.add(book));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(book));
     }
 
     @PutMapping("{bookId}")

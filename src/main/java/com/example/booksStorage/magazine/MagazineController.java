@@ -1,6 +1,5 @@
 package com.example.booksStorage.magazine;
 
-import com.example.booksStorage.book.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,7 @@ public class MagazineController {
 
     @PostMapping
     public ResponseEntity<Magazine> add(@RequestBody Magazine magazine) {
-        return ResponseEntity.ok(service.add(magazine));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(magazine));
     }
 
     @PutMapping("{magazineId}")

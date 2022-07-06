@@ -1,6 +1,5 @@
 package com.example.booksStorage.letters;
 
-import com.example.booksStorage.book.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,7 @@ public class LetterController {
 
     @PostMapping
     public ResponseEntity<Letter> add(@RequestBody Letter letter) {
-        return ResponseEntity.ok(service.add(letter));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(letter));
     }
 
     @PutMapping("{letterId}")
