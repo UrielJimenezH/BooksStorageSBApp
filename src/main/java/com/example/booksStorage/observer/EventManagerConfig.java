@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class EventManagerConfig<T> implements Config<T> {
+public class EventManagerConfig<T> {
     public static final String BOOK_CREATION_EVENT = "bookCreated";
     public static final String MAGAZINE_CREATION_EVENT = "magazineCreated";
     public static final String NEWSPAPER_CREATION_EVENT = "newspaperCreated";
@@ -20,7 +20,6 @@ public class EventManagerConfig<T> implements Config<T> {
         this.subscriber = subscriber;
     }
 
-    @Override
     public Map<String, List<Subscriber<T>>> getEvents() {
         Map<String, List<Subscriber<T>>> map = new HashMap<>();
         List.of(BOOK_CREATION_EVENT,

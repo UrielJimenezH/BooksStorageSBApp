@@ -9,7 +9,7 @@ public class EventManager<T> implements Publisher<T> {
     private final Map<String, List<Subscriber<T>>> events;
 
     @Autowired
-    public EventManager(Config<T> config) {
+    public EventManager(EventManagerConfig<T> config) {
         this.events = config.getEvents();
     }
 
