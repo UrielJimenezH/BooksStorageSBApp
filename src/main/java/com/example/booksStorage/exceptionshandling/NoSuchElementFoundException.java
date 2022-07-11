@@ -1,4 +1,4 @@
-package com.example.booksStorage.exceptionsHandling;
+package com.example.booksStorage.exceptionshandling;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

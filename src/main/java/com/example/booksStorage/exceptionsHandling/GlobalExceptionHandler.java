@@ -4,14 +4,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -21,10 +19,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private boolean printStackTrace;
 
     //Todo this method is not being called !!!
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler(HttpMessageConversionException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleIllegalArgumentException(
-            IllegalArgumentException exception,
+            HttpMessageConversionException exception,
             WebRequest request
     ) {
         return buildErrorResponse(
@@ -65,25 +63,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus httpStatus,
             WebRequest request
     ) {
-        ErrorResponse errorResponse = new ErrorResponse(
-                httpStatus.value(),
-                exception.getCause().getCause().getMessage()
-        );
-
-        if(printStackTrace && isTraceOn(request)){
-            errorResponse.setStackTrace(
-                    Arrays.stream(exception.getStackTrace())
-                            .map(StackTraceElement::toString)
-                            .collect(Collectors.joining(" --- "))
-            );
-        }
-        return ResponseEntity.status(httpStatus).body(errorResponse);
-    }
-
-    private boolean isTraceOn(WebRequest request) {
-        String [] value = request.getParameterValues(TRACE);
-        return Objects.nonNull(value)
-                && value.length > 0
-                && value[0].contentEquals("true");
+        return ResponseEntity.status(httpStatus).body(exception.getCause().getCause().getMessage());
     }
 }

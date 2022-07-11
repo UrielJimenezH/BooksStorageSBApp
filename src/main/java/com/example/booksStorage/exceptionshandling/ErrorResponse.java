@@ -1,4 +1,4 @@
-package com.example.booksStorage.exceptionsHandling;
+package com.example.booksStorage.exceptionshandling;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;

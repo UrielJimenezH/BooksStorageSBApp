@@ -1,7 +1,7 @@
 package com.example.booksStorage.magazine;
 
 import com.example.booksStorage.Item;
-import com.example.booksStorage.exceptionsHandling.NoSuchElementFoundException;
+import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
