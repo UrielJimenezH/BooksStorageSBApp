@@ -1,12 +1,12 @@
 package com.example.booksStorage.newspaper;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +26,11 @@ public class NewspaperService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Newspaper> get(Long newspaperId) {
+    public Newspaper get(Long newspaperId) {
         return repository.get(newspaperId)
                 .filter(item -> item instanceof Newspaper)
-                .map(item -> (Newspaper) item);
+                .map(item -> (Newspaper) item)
+                .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + newspaperId + " does not exist"));
     }
 
     public Newspaper add(Newspaper newspaper) {
@@ -37,28 +38,27 @@ public class NewspaperService {
         return newspaper;
     }
 
-    public Optional<Newspaper> update(Long newspaperId, Newspaper newNewspaper) {
-        Optional<Newspaper> newspaper = repository.get(newspaperId)
+    public Newspaper update(Long newspaperId, Newspaper newNewspaper) {
+        return repository.get(newspaperId)
                 .filter(item -> item instanceof Newspaper)
-                .map(item -> (Newspaper) item);
-
-        if (newspaper.isEmpty())
-            return Optional.empty();
-
-        newNewspaper.setId(newspaperId);
-        newNewspaper.setRegistrationDate(newspaper.get().getRegistrationDate());
-        repository.update(newspaperId, newNewspaper);
-        return Optional.of(newNewspaper);
+                .map(item -> {
+                    Newspaper newspaper = (Newspaper) item;
+                    newNewspaper.setId(newspaperId);
+                    newNewspaper.setRegistrationDate(newspaper.getRegistrationDate());
+                    repository.update(newspaperId, newNewspaper);
+                    return newNewspaper;
+                })
+                .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + newspaperId + " does not exist"));
     }
 
-    public Optional<Newspaper> delete(Long newspaperId) {
-        Optional<Newspaper> newspaperFound = repository.get(newspaperId)
+    public Newspaper delete(Long newspaperId) {
+        return repository.get(newspaperId)
                 .filter(item -> item instanceof Newspaper)
-                .map(item -> (Newspaper) item);
-
-        if (newspaperFound.isPresent())
-            repository.delete(newspaperId);
-
-        return newspaperFound;
+                .map(item -> {
+                    Newspaper newspaper = (Newspaper) item;
+                    repository.delete(newspaperId);
+                    return newspaper;
+                })
+                .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + newspaperId + " does not exist"));
     }
 }

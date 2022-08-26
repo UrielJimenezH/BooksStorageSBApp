@@ -1,11 +1,9 @@
 package com.example.booksStorage.letters;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/letters")
@@ -24,12 +22,7 @@ public class LetterController {
 
     @GetMapping("{letterId}")
     public ResponseEntity<?> get(@PathVariable("letterId") Long letterId) {
-         Optional<Letter> opLetter = service.get(letterId);
-
-         if (opLetter.isPresent())
-             return ResponseEntity.ok(opLetter.get());
-
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Letter with id " + letterId + " does not exist");
+        return ResponseEntity.ok(service.get(letterId));
     }
 
     @PostMapping
@@ -42,21 +35,11 @@ public class LetterController {
             @PathVariable("letterId") Long letterId,
             @RequestBody Letter letter
     ) {
-        Optional<Letter> opLetter = service.update(letterId, letter);
-
-        if (opLetter.isPresent())
-            return ResponseEntity.ok(opLetter.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Letter with id " + letterId + " does not exist");
+        return ResponseEntity.ok(service.update(letterId, letter));
     }
 
     @DeleteMapping("{letterId}")
     public ResponseEntity<?> delete(@PathVariable("letterId") Long letterId) {
-        Optional<Letter> opLetter = service.delete(letterId);
-
-        if (opLetter.isPresent())
-            return ResponseEntity.ok(opLetter.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Letter with id " + letterId + " does not exist");
+        return ResponseEntity.ok(service.delete(letterId));
     }
 }

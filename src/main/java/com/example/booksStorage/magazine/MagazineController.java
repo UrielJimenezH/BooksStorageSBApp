@@ -1,11 +1,9 @@
 package com.example.booksStorage.magazine;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/magazines")
@@ -24,12 +22,7 @@ public class MagazineController {
 
     @GetMapping("{magazineId}")
     public ResponseEntity<?> get(@PathVariable("magazineId") Long magazineId) {
-         Optional<Magazine> opMagazine = service.get(magazineId);
-
-         if (opMagazine.isPresent())
-             return ResponseEntity.ok(opMagazine.get());
-
-         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Magazine with id " + magazineId + " does not exist");
+        return ResponseEntity.ok(service.get(magazineId));
     }
 
     @PostMapping
@@ -42,21 +35,11 @@ public class MagazineController {
             @PathVariable("magazineId") Long magazineId,
             @RequestBody Magazine magazine
     ) {
-        Optional<Magazine> opMagazine = service.update(magazineId, magazine);
-
-        if (opMagazine.isPresent())
-            return ResponseEntity.ok(opMagazine.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Magazine with id " + magazineId + " does not exist");
+        return ResponseEntity.ok(service.update(magazineId, magazine));
     }
 
     @DeleteMapping("{magazineId}")
     public ResponseEntity<?> delete(@PathVariable("magazineId") Long magazineId) {
-        Optional<Magazine> opMagazine = service.delete(magazineId);
-
-        if (opMagazine.isPresent())
-            return ResponseEntity.ok(opMagazine.get());
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Magazine with id " + magazineId + " does not exist");
+        return ResponseEntity.ok(service.delete(magazineId));
     }
 }

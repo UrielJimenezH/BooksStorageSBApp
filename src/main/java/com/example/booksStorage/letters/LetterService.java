@@ -1,12 +1,12 @@
 package com.example.booksStorage.letters;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,10 +26,11 @@ public class LetterService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Letter> get(Long letterId) {
+    public Letter get(Long letterId) {
         return repository.get(letterId)
                 .filter(item -> item instanceof Letter)
-                .map(item -> (Letter) item);
+                .map(item -> (Letter) item)
+                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
     }
 
     public Letter add(Letter letter) {
@@ -37,28 +38,28 @@ public class LetterService {
         return letter;
     }
 
-    public Optional<Letter> update(Long letterId, Letter newLetter) {
-        Optional<Letter> letter = repository.get(letterId)
+    public Letter update(Long letterId, Letter newLetter) {
+        return repository.get(letterId)
                 .filter(item -> item instanceof Letter)
-                .map(item -> (Letter) item);
+                .map(item -> {
+                    Letter letter = (Letter) item;
 
-        if (letter.isEmpty())
-            return Optional.empty();
-
-        newLetter.setId(letterId);
-        newLetter.setRegistrationDate(letter.get().getRegistrationDate());
-        repository.update(letterId, newLetter);
-        return Optional.of(newLetter);
+                    newLetter.setId(letterId);
+                    newLetter.setRegistrationDate(letter.getRegistrationDate());
+                    repository.update(letterId, newLetter);
+                    return letter;
+                })
+                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
     }
 
-    public Optional<Letter> delete(Long letterId) {
-        Optional<Letter> letterFound = repository.get(letterId)
+    public Letter delete(Long letterId) {
+        return repository.get(letterId)
                 .filter(item -> item instanceof Letter)
-                .map(item -> (Letter) item);
-
-        if (letterFound.isPresent())
-            repository.delete(letterId);
-
-        return letterFound;
+                .map(item -> {
+                    Letter letter = (Letter) item;
+                    repository.delete(letterId);
+                    return letter;
+                })
+                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
     }
 }

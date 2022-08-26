@@ -1,6 +1,7 @@
 package com.example.booksStorage.book;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,10 +26,11 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Book> get(Long bookId) {
+    public Book get(Long bookId) {
         return repository.get(bookId)
                 .filter(item -> item instanceof Book)
-                .map(item -> (Book) item);
+                .map(item -> (Book) item)
+                .orElseThrow(() -> new NoSuchElementFoundException("Book with id " + bookId + " does not exist"));
     }
 
     public Book add(Book book) {
@@ -36,28 +38,27 @@ public class BookService {
         return book;
     }
 
-    public Optional<Book> update(Long bookId, Book newBook) {
-        Optional<Book> book = repository.get(bookId)
+    public Book update(Long bookId, Book newBook) {
+        return repository.get(bookId)
                 .filter(item -> item instanceof Book)
-                .map(item -> (Book) item);
-
-        if (book.isEmpty())
-            return Optional.empty();
-
-        newBook.setId(bookId);
-        newBook.setRegistrationDate(book.get().getRegistrationDate());
-        repository.update(bookId, newBook);
-        return Optional.of(newBook);
+                .map(item -> {
+                    Book book = (Book) item;
+                    newBook.setId(bookId);
+                    newBook.setRegistrationDate(book.getRegistrationDate());
+                    repository.update(bookId, newBook);
+                    return newBook;
+                })
+                .orElseThrow(() -> new NoSuchElementFoundException("Book with id " + bookId + " does not exist"));
     }
 
-    public Optional<Book> delete(Long bookId) {
-        Optional<Book> bookFound = repository.get(bookId)
+    public Book delete(Long bookId) {
+        return repository.get(bookId)
                 .filter(item -> item instanceof Book)
-                .map(item -> (Book) item);
-
-        if (bookFound.isPresent())
-            repository.delete(bookId);
-
-        return bookFound;
+                .map(item -> {
+                    Book book = (Book) item;
+                    repository.delete(bookId);
+                    return book;
+                })
+                .orElseThrow(() -> new NoSuchElementFoundException("Book with id " + bookId + " does not exist"));
     }
 }
