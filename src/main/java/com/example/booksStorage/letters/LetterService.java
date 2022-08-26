@@ -1,6 +1,8 @@
 package com.example.booksStorage.letters;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.observer.EventManager;
+import com.example.booksStorage.observer.EventManagerConfig;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,15 @@ import java.util.stream.Collectors;
 @Service
 public class LetterService {
     private final Repository<Long, Item> repository;
+    private final EventManager<Item> eventManager;
 
     @Autowired
-    public LetterService(@Qualifier("treeMapRepository") Repository<Long, Item> repository) {
+    public LetterService(
+            @Qualifier("treeMapRepository") Repository<Long, Item> repository,
+            EventManager<Item> eventManager
+    ) {
         this.repository = repository;
+        this.eventManager = eventManager;
     }
 
     public List<Letter> getAll() {

@@ -2,6 +2,8 @@ package com.example.booksStorage.magazine;
 
 import com.example.booksStorage.Item;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
+import com.example.booksStorage.observer.EventManager;
+import com.example.booksStorage.observer.EventManagerConfig;
 import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,10 +14,15 @@ import java.util.stream.Collectors;
 @Service
 public class MagazineService {
     private final Repository<Long, Item> repository;
+    private final EventManager<Item> eventManager;
 
     @Autowired
-    public MagazineService(@Qualifier("treeMapRepository") Repository<Long, Item> repository) {
+    public MagazineService(
+            @Qualifier("treeMapRepository") Repository<Long, Item> repository,
+            EventManager<Item> eventManager
+    ) {
         this.repository = repository;
+        this.eventManager = eventManager;
     }
 
     public List<Magazine> getAll() {
@@ -35,6 +42,7 @@ public class MagazineService {
 
     public Magazine add(Magazine magazine) {
         repository.save(magazine.getId(), magazine);
+        eventManager.notifySubscribers(EventManagerConfig.MAGAZINE_CREATION_EVENT, magazine);
         return magazine;
     }
 
