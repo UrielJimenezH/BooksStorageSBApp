@@ -14,10 +14,9 @@ public abstract class Item {
     private Integer numberOfPages;
     private LocalDate releaseDate;
     private LocalDate registrationDate;
+    private Long holderId = null;
 
     private static long nextId = 1;
-
-//    protected static Validations validations = new Validations();
 
     public Item(
             String summary,
