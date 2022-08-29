@@ -1,10 +1,10 @@
-DROP DATABASE IF EXISTS BooksStorage;
-
-CREATE DATABASE BooksStorage;
-
-USE BooksStorage;
-
-DROP TABLE IF EXISTS Users;
+--DROP DATABASE IF EXISTS BooksStorage;
+--
+--CREATE DATABASE BooksStorage;
+--
+--USE BooksStorage;
+--
+--DROP TABLE IF EXISTS Users;
 
 CREATE TABLE Users(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,

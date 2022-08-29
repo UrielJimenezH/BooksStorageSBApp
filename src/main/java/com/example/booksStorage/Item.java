@@ -16,14 +16,11 @@ public abstract class Item {
     private LocalDate registrationDate;
     private Long holderId = null;
 
-    private static long nextId = 1;
-
     public Item(
             String summary,
             int numberOfPages,
             LocalDate releaseDate
     ) {
-        this.id = nextId++;
         this.summary = Validations.validate(summary);
         this.numberOfPages = Validations.validate(numberOfPages);
         this.releaseDate = Validations.validate(releaseDate);

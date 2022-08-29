@@ -8,7 +8,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 @Configuration
-@ComponentScan(basePackages = { "book" })//Todo add letter, magazine and newspaper
 public class DataSourceConfiguration {
     @Bean
     public DataSource dataSource() {
