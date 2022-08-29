@@ -4,69 +4,42 @@ import com.example.booksStorage.Item;
 import com.example.booksStorage.observer.EventManager;
 import com.example.booksStorage.observer.EventManagerConfig;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
-import com.example.booksStorage.repository.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 public class LetterService {
-    private final Repository<Long, Item> repository;
-    private final EventManager<Item> eventManager;
-
     @Autowired
-    public LetterService(
-            @Qualifier("treeMapRepository") Repository<Long, Item> repository,
-            EventManager<Item> eventManager
-    ) {
-        this.repository = repository;
-        this.eventManager = eventManager;
-    }
+    private LetterRepository repository;
+    @Autowired
+    private EventManager<Item> eventManager;
 
     public List<Letter> getAll() {
-        return repository.getAll()
-                .stream()
-                .filter(item -> item instanceof Letter)
-                .map(item -> (Letter) item)
-                .collect(Collectors.toList());
+        return repository.getAll();
     }
 
-    public Letter get(Long letterId) {
-        return repository.get(letterId)
-                .filter(item -> item instanceof Letter)
-                .map(item -> (Letter) item)
-                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+    public Letter get(Long id) {
+        return repository.get(id)
+                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
     }
 
     public Letter add(Letter letter) {
-        repository.save(letter.getId(), letter);
-        return letter;
+        Letter newLetter = repository.save(letter);
+        eventManager.notifySubscribers(EventManagerConfig.BOOK_CREATION_EVENT, letter);
+        return newLetter;
     }
 
-    public Letter update(Long letterId, Letter newLetter) {
-        return repository.get(letterId)
-                .filter(item -> item instanceof Letter)
-                .map(item -> {
-                    Letter letter = (Letter) item;
-
-                    newLetter.setId(letterId);
-                    newLetter.setRegistrationDate(letter.getRegistrationDate());
-                    repository.update(letterId, newLetter);
-                    return letter;
-                })
-                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+    public Letter update(Long id, Letter newLetter) {
+        newLetter.setId(id);
+        Optional<Letter> updatedLetter = repository.update(newLetter);
+        return updatedLetter
+                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
     }
 
-    public Letter delete(Long letterId) {
-        return repository.get(letterId)
-                .filter(item -> item instanceof Letter)
-                .map(item -> {
-                    Letter letter = (Letter) item;
-                    repository.delete(letterId);
-                    return letter;
-                })
-                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+    public Letter delete(Long id) {
+        return repository.delete(id)
+                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
     }
 }
