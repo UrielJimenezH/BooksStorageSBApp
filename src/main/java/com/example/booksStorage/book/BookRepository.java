@@ -101,7 +101,7 @@ public class BookRepository {
         });
 
         if (bookFound.isPresent())
-            return Optional.ofNullable(book);
+            return Optional.of(book);
         else
             return bookFound;
     }

@@ -90,7 +90,7 @@ public class LetterRepository {
 
 
         if (letterFound.isPresent())
-            return Optional.ofNullable(letter);
+            return Optional.of(letter);
         else
             return letterFound;
     }
