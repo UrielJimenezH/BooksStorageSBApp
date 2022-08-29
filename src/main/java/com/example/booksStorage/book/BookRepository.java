@@ -34,7 +34,7 @@ public class BookRepository {
         return book;
     };
 
-    public Optional<Book> get(long id) {
+    public Optional<Book> get(Long id) {
         String sql = "SELECT * FROM Books WHERE id = ?";
         try {
             return Optional.ofNullable(jdbcTemplate.queryForObject(sql, rowMapper, id));
@@ -100,7 +100,10 @@ public class BookRepository {
             );
         });
 
-        return bookFound;
+        if (bookFound.isPresent())
+            return Optional.ofNullable(book);
+        else
+            return bookFound;
     }
 
     public Optional<Book> delete(long id) {

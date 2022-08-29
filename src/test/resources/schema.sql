@@ -13,8 +13,7 @@ CREATE TABLE Users(
     address VARCHAR(255),
     date_of_birth DATE NOT NULL,
     username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    registration_date DATE NOT NULL
+    password VARCHAR(255) NOT NULL
 );
 
 
