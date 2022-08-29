@@ -39,7 +39,9 @@ public class LetterService {
     }
 
     public Letter delete(Long id) {
-        return repository.delete(id)
+        Letter l = repository.delete(id)
                 .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
+
+        return l;
     }
 }
