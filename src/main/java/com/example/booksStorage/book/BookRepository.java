@@ -67,7 +67,7 @@ public class BookRepository {
             return statement;
         }, keyHolder);
 
-        book.setId(keyHolder.getKey().longValue());
+        book.setId((Long) keyHolder.getKey());
         return book;
     }
 
@@ -82,8 +82,7 @@ public class BookRepository {
                     "summary = ?, " +
                     "number_of_pages = ?, " +
                     "release_date = ?, " +
-                    "registration_date = ?, " +
-                    "holder_id = ? " +
+                    "registration_date = ? " +
                     "WHERE id = ?";
 
             jdbcTemplate.update(sql,
@@ -95,7 +94,6 @@ public class BookRepository {
                     book.getNumberOfPages(),
                     Date.valueOf(book.getReleaseDate()),
                     Date.valueOf(book.getRegistrationDate()),
-                    book.getHolderId(),
                     book.getId()
             );
         });
@@ -112,6 +110,32 @@ public class BookRepository {
             String sql = "DELETE FROM Books WHERE id = ?";
             jdbcTemplate.update(sql, id);
         });
+        return bookFound;
+    }
+
+    public Optional<Book> hold(long bookId, long holderId) {
+        Optional<Book> bookFound = get(bookId);
+        bookFound.ifPresent((b) -> {
+            String sql = "UPDATE Books SET " +
+                    "holder_id = ? " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, holderId, bookId);
+            bookFound.get().setHolderId(holderId);
+        });
+
+        return bookFound;
+    }
+
+    public Optional<Book> release(long bookId) {
+        Optional<Book> bookFound = get(bookId);
+        bookFound.ifPresent((b) -> {
+            String sql = "UPDATE Books SET " +
+                    "holder_id = NULL " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, bookId);
+            bookFound.get().setHolderId(null);
+        });
+
         return bookFound;
     }
 }

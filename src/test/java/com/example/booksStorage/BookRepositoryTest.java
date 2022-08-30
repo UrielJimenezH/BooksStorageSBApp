@@ -27,6 +27,7 @@ public class BookRepositoryTest {
                 .ignoreFailedDrops(true)
                 .addScript("schema.sql")
                 .addScript("books-test-data.sql")
+                .addScript("users-test-data.sql")
                 .build();
 
         repository = new BookRepository();
@@ -122,5 +123,32 @@ public class BookRepositoryTest {
         }, () -> {
             throw new RuntimeException("Not found");
         });
+    }
+
+    @Test
+    public void hold_ReturnsEmptyOptional_WhenBookWithGivenIdDoesNotExist() {
+        Optional<Book> bookFound = repository.hold(60L, 1L);
+        assertFalse(bookFound.isPresent());
+    }
+
+    @Test
+    public void hold_ReturnsABook_WhenBookAndUserWithGivenIdsExist() {
+        long holderId = 2L;
+        Optional<Book> bookFound = repository.hold(5L, holderId);
+        assertTrue(bookFound.isPresent());
+        assertEquals(holderId, bookFound.get().getHolderId().longValue());
+    }
+
+    @Test
+    public void release_ReturnsEmptyOptional_WhenBookWithGivenIdDoesNotExist() {
+        Optional<Book> bookFound = repository.release(60L);
+        assertFalse(bookFound.isPresent());
+    }
+
+    @Test
+    public void release_ReturnsABook_WhenBookWithGivenIdExists() {
+        Optional<Book> bookFound = repository.release(5L);
+        assertTrue(bookFound.isPresent());
+        assertNull(bookFound.get().getHolderId());
     }
 }
