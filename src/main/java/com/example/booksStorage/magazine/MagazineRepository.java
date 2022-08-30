@@ -64,7 +64,7 @@ public class MagazineRepository {
             return statement;
         }, keyHolder);
 
-        magazine.setId(keyHolder.getKey().longValue());
+        magazine.setId((Long) keyHolder.getKey());
         return magazine;
     }
 
@@ -77,8 +77,7 @@ public class MagazineRepository {
                     "summary = ?, " +
                     "number_of_pages = ?, " +
                     "release_date = ?, " +
-                    "registration_date = ?, " +
-                    "holder_id = ? " +
+                    "registration_date = ? " +
                     "WHERE id = ?";
 
             jdbcTemplate.update(sql,
@@ -88,7 +87,6 @@ public class MagazineRepository {
                     magazine.getNumberOfPages(),
                     Date.valueOf(magazine.getReleaseDate()),
                     Date.valueOf(magazine.getRegistrationDate()),
-                    magazine.getHolderId(),
                     magazine.getId()
             );
         });
@@ -105,6 +103,33 @@ public class MagazineRepository {
             String sql = "DELETE FROM Magazines WHERE id = ?";
             jdbcTemplate.update(sql, id);
         });
+
+        return magazineFound;
+    }
+
+    public Optional<Magazine> hold(long magazineId, long holderId) {
+        Optional<Magazine> magazineFound = get(magazineId);
+        magazineFound.ifPresent((b) -> {
+            String sql = "UPDATE Magazines SET " +
+                    "holder_id = ? " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, holderId, magazineId);
+            magazineFound.get().setHolderId(holderId);
+        });
+
+        return magazineFound;
+    }
+
+    public Optional<Magazine> release(long magazineId) {
+        Optional<Magazine> magazineFound = get(magazineId);
+        magazineFound.ifPresent((b) -> {
+            String sql = "UPDATE Magazines SET " +
+                    "holder_id = NULL " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, magazineId);
+            magazineFound.get().setHolderId(null);
+        });
+
         return magazineFound;
     }
 }

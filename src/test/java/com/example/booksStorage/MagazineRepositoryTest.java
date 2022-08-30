@@ -28,6 +28,7 @@ public class MagazineRepositoryTest {
                 .ignoreFailedDrops(true)
                 .addScript("schema.sql")
                 .addScript("magazines-test-data.sql")
+                .addScript("users-test-data.sql")
                 .build();
 
         repository = new MagazineRepository();
@@ -123,5 +124,32 @@ public class MagazineRepositoryTest {
         }, () -> {
             throw new RuntimeException("Not found");
         });
+    }
+
+    @Test
+    public void hold_ReturnsEmptyOptional_WhenMagazineWithGivenIdDoesNotExist() {
+        Optional<Magazine> magazineFound = repository.hold(60L, 1L);
+        assertFalse(magazineFound.isPresent());
+    }
+
+    @Test
+    public void hold_ReturnsAMagazine_WhenMagazineAndUserWithGivenIdsExist() {
+        long holderId = 2L;
+        Optional<Magazine> magazineFound = repository.hold(5L, holderId);
+        assertTrue(magazineFound.isPresent());
+        assertEquals(holderId, magazineFound.get().getHolderId().longValue());
+    }
+
+    @Test
+    public void release_ReturnsEmptyOptional_WhenMagazineWithGivenIdDoesNotExist() {
+        Optional<Magazine> magazineFound = repository.release(60L);
+        assertFalse(magazineFound.isPresent());
+    }
+
+    @Test
+    public void release_ReturnsAMagazine_WhenMagazineWithGivenIdExists() {
+        Optional<Magazine> magazineFound = repository.release(5L);
+        assertTrue(magazineFound.isPresent());
+        assertNull(magazineFound.get().getHolderId());
     }
 }

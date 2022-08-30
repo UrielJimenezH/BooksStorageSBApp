@@ -1,9 +1,13 @@
 package com.example.booksStorage;
 
+import com.example.booksStorage.exceptionsHandling.CanNotReleaseException;
+import com.example.booksStorage.exceptionsHandling.ElementAlreadyBeingHoldException;
 import com.example.booksStorage.magazine.Magazine;
 import com.example.booksStorage.magazine.MagazineRepository;
 import com.example.booksStorage.magazine.MagazineService;
 import com.example.booksStorage.observer.EventManager;
+import com.example.booksStorage.user.User;
+import com.example.booksStorage.user.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -15,18 +19,27 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MagazineServiceTest {
     @Mock
     private MagazineRepository repository;
     @Mock
+    private UserRepository userRepository;
+    @Mock
     private EventManager<Item> eventManager;
     @InjectMocks
     private MagazineService service;
     private final static Magazine magazine = new Magazine("Summary", 3, LocalDate.now(), "Animals magazine", "Publisher");
+    private final static User user = new User(
+            "Fernando",
+            "Lopez",
+            "Manuel Perez # 23",
+            LocalDate.now(),
+            "carlos23",
+            "carlos#1234"
+    );
 
     @Test
     public void getAll_ReturnsEmptyList() {
@@ -93,5 +106,62 @@ public class MagazineServiceTest {
         Mockito.when(repository.delete(id)).thenReturn(Optional.of(magazine));
 
         assertEquals(magazine, service.delete(id));
+    }
+
+
+    @Test(expected = NoSuchElementFoundException.class)
+    public void hold_ThrowsNoSuchElementFoundException_WhenUserWithGivenIdDoesNotExist() {
+        service.hold(6L, 10L);
+    }
+
+    @Test(expected = ElementAlreadyBeingHoldException.class)
+    public void hold_ThrowsElementAlreadyBeingHoldException_WhenHolderIdIsDifferentFromTheOneAlreadyStored() {
+        magazine.setHolderId(3L);
+        Mockito.when(userRepository.get(1L)).thenReturn(Optional.of(user));
+        Mockito.when(repository.get(1L)).thenReturn(Optional.of(magazine));
+        service.hold(1L, 1L);
+    }
+
+    @Test
+    public void hold_ReturnsMagazine_WhenMagazineIsNotAlreadyBeingHold() {
+        long magazineId = 1L;
+        long holderId = 1L;
+        magazine.setHolderId(null);
+        Mockito.when(userRepository.get(holderId)).thenReturn(Optional.of(user));
+        Mockito.when(repository.get(magazineId)).thenReturn(Optional.of(magazine));
+        magazine.setHolderId(holderId);
+        Mockito.when(repository.hold(magazineId, holderId)).thenReturn(Optional.of(magazine));
+        Magazine heldMagazine = service.hold(magazineId, holderId);
+
+        assertEquals(holderId, heldMagazine.getHolderId().longValue());
+    }
+
+    @Test(expected = NoSuchElementFoundException.class)
+    public void release_ThrowsNoSuchElementFoundException_WhenUserWithGivenIdDoesNotExist() {
+        service.release(6L, 10L);
+    }
+
+    @Test(expected = CanNotReleaseException.class)
+    public void release_ThrowsElementAlreadyBeingHoldException_WhenHolderIdIsDifferentFromTheOneAlreadyStored() {
+        long magazineId = 1L;
+        long holderId = 1L;
+        magazine.setHolderId(3L);
+        Mockito.when(userRepository.get(holderId)).thenReturn(Optional.of(user));
+        Mockito.when(repository.get(magazineId)).thenReturn(Optional.of(magazine));
+        service.release(magazineId, holderId);
+    }
+
+    @Test
+    public void release_ReturnsMagazine_WhenMagazineIsNotAlreadyBeingHold() {
+        long magazineId = 1L;
+        long holderId = 1L;
+        magazine.setHolderId(holderId);
+        Mockito.when(userRepository.get(holderId)).thenReturn(Optional.of(user));
+        Mockito.when(repository.get(magazineId)).thenReturn(Optional.of(magazine));
+        magazine.setHolderId(null);
+        Mockito.when(repository.release(magazineId)).thenReturn(Optional.of(magazine));
+        Magazine heldMagazine = service.release(magazineId, holderId);
+
+        assertNull(heldMagazine.getHolderId());
     }
 }
