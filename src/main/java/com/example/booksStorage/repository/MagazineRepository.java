@@ -1,5 +1,6 @@
-package com.example.booksStorage.magazine;
+package com.example.booksStorage.repository;
 
+import com.example.booksStorage.domain.Magazine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -64,7 +65,7 @@ public class MagazineRepository {
             return statement;
         }, keyHolder);
 
-        magazine.setId((Long) keyHolder.getKey());
+        magazine.setId(keyHolder.getKey().longValue());
         return magazine;
     }
 

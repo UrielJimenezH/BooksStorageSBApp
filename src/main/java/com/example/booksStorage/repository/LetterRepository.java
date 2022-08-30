@@ -1,5 +1,6 @@
-package com.example.booksStorage.letters;
+package com.example.booksStorage.repository;
 
+import com.example.booksStorage.domain.Letter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -61,7 +62,7 @@ public class LetterRepository {
             return statement;
         }, keyHolder);
 
-        letter.setId((Long) keyHolder.getKey());
+        letter.setId(keyHolder.getKey().longValue());
         return letter;
     }
 

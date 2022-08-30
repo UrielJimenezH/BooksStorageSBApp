@@ -1,5 +1,6 @@
-package com.example.booksStorage.book;
+package com.example.booksStorage.repository;
 
+import com.example.booksStorage.domain.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -67,7 +68,7 @@ public class BookRepository {
             return statement;
         }, keyHolder);
 
-        book.setId((Long) keyHolder.getKey());
+        book.setId(keyHolder.getKey().longValue());
         return book;
     }
 

@@ -1,5 +1,6 @@
-package com.example.booksStorage.user;
+package com.example.booksStorage.repository;
 
+import com.example.booksStorage.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,6 +1,5 @@
-package com.example.booksStorage.magazine;
+package com.example.booksStorage.domain;
 
-import com.example.booksStorage.Item;
 import com.example.booksStorage.validations.Validations;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,20 +11,17 @@ import java.time.LocalDate;
 @Setter
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-public final class Magazine extends Item {
-    private String title;
-    private final String publisher;
+public final class Letter extends Item {
+    private String author;
 
-    public Magazine(
+    public Letter(
             String summary,
             Integer numberOfPages,
             LocalDate releaseDate,
-            String title,
-            String publisher
+            String author
     ) {
         super(summary, numberOfPages, releaseDate);
 
-        this.title = Validations.validate(title);
-        this.publisher = Validations.validate(publisher);
+        this.author = Validations.validate(author);
     }
 }

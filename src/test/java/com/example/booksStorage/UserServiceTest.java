@@ -1,9 +1,9 @@
 package com.example.booksStorage;
 
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
-import com.example.booksStorage.user.User;
-import com.example.booksStorage.user.UserRepository;
-import com.example.booksStorage.user.UserService;
+import com.example.booksStorage.domain.User;
+import com.example.booksStorage.repository.UserRepository;
+import com.example.booksStorage.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;

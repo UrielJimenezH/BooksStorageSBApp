@@ -1,6 +1,8 @@
-package com.example.booksStorage.newspaper;
+package com.example.booksStorage.controller;
 
-import com.example.booksStorage.user.Holder;
+import com.example.booksStorage.domain.Newspaper;
+import com.example.booksStorage.domain.Holder;
+import com.example.booksStorage.service.NewspaperService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,6 @@
-package com.example.booksStorage.newspaper;
+package com.example.booksStorage.repository;
 
-import com.example.booksStorage.newspaper.Newspaper;
-import com.example.booksStorage.newspaper.Newspaper;
+import com.example.booksStorage.domain.Newspaper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -66,7 +65,7 @@ public class NewspaperRepository {
             return statement;
         }, keyHolder);
 
-        newspaper.setId((Long) keyHolder.getKey());
+        newspaper.setId(keyHolder.getKey().longValue());
         return newspaper;
     }
 

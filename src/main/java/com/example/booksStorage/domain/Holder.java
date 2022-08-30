@@ -1,4 +1,4 @@
-package com.example.booksStorage.user;
+package com.example.booksStorage.domain;
 
 import com.example.booksStorage.validations.Validations;
 import lombok.Getter;

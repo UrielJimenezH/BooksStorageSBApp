@@ -1,7 +1,7 @@
 package com.example.booksStorage;
 
-import com.example.booksStorage.magazine.Magazine;
-import com.example.booksStorage.magazine.MagazineRepository;
+import com.example.booksStorage.domain.Magazine;
+import com.example.booksStorage.repository.MagazineRepository;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;

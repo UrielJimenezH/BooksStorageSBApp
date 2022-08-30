@@ -1,4 +1,4 @@
-package com.example.booksStorage;
+package com.example.booksStorage.domain;
 
 import com.example.booksStorage.validations.*;
 import lombok.*;

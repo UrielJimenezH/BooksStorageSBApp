@@ -1,4 +1,4 @@
-package com.example.booksStorage.user;
+package com.example.booksStorage.domain;
 
 import lombok.*;
 import java.time.LocalDate;

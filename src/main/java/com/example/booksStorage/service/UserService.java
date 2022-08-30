@@ -1,6 +1,8 @@
-package com.example.booksStorage.user;
+package com.example.booksStorage.service;
 
+import com.example.booksStorage.domain.User;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
+import com.example.booksStorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;

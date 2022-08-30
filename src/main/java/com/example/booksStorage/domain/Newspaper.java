@@ -1,6 +1,5 @@
-package com.example.booksStorage.newspaper;
+package com.example.booksStorage.domain;
 
-import com.example.booksStorage.Item;
 import com.example.booksStorage.validations.Validations;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

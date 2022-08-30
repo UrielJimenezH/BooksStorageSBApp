@@ -1,7 +1,7 @@
 package com.example.booksStorage;
 
-import com.example.booksStorage.user.User;
-import com.example.booksStorage.user.UserRepository;
+import com.example.booksStorage.domain.User;
+import com.example.booksStorage.repository.UserRepository;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.jdbc.core.JdbcTemplate;

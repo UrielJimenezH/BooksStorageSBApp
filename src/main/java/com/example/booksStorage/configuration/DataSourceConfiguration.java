@@ -1,4 +1,4 @@
-package com.example.booksStorage;
+package com.example.booksStorage.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

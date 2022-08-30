@@ -1,13 +1,14 @@
 package com.example.booksStorage;
 
+import com.example.booksStorage.domain.Item;
 import com.example.booksStorage.exceptionsHandling.CanNotReleaseException;
 import com.example.booksStorage.exceptionsHandling.ElementAlreadyBeingHoldException;
-import com.example.booksStorage.magazine.Magazine;
-import com.example.booksStorage.magazine.MagazineRepository;
-import com.example.booksStorage.magazine.MagazineService;
+import com.example.booksStorage.domain.Magazine;
+import com.example.booksStorage.repository.MagazineRepository;
+import com.example.booksStorage.service.MagazineService;
 import com.example.booksStorage.observer.EventManager;
-import com.example.booksStorage.user.User;
-import com.example.booksStorage.user.UserRepository;
+import com.example.booksStorage.domain.User;
+import com.example.booksStorage.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
