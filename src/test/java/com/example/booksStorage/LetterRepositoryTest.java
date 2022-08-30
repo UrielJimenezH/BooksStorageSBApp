@@ -27,6 +27,7 @@ public class LetterRepositoryTest {
                 .ignoreFailedDrops(true)
                 .addScript("schema.sql")
                 .addScript("letters-test-data.sql")
+                .addScript("users-test-data.sql")
                 .build();
 
         repository = new LetterRepository();
@@ -123,5 +124,31 @@ public class LetterRepositoryTest {
         }, () -> {
             throw new RuntimeException("Not found");
         });
+    }
+    @Test
+    public void hold_ReturnsEmptyOptional_WhenLetterWithGivenIdDoesNotExist() {
+        Optional<Letter> letterFound = repository.hold(60L, 1L);
+        assertFalse(letterFound.isPresent());
+    }
+
+    @Test
+    public void hold_ReturnsALetter_WhenLetterAndUserWithGivenIdsExist() {
+        long holderId = 2L;
+        Optional<Letter> letterFound = repository.hold(5L, holderId);
+        assertTrue(letterFound.isPresent());
+        assertEquals(holderId, letterFound.get().getHolderId().longValue());
+    }
+
+    @Test
+    public void release_ReturnsEmptyOptional_WhenLetterWithGivenIdDoesNotExist() {
+        Optional<Letter> letterFound = repository.release(60L);
+        assertFalse(letterFound.isPresent());
+    }
+
+    @Test
+    public void release_ReturnsALetter_WhenLetterWithGivenIdExists() {
+        Optional<Letter> letterFound = repository.release(5L);
+        assertTrue(letterFound.isPresent());
+        assertNull(letterFound.get().getHolderId());
     }
 }

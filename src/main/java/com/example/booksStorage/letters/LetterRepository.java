@@ -61,7 +61,7 @@ public class LetterRepository {
             return statement;
         }, keyHolder);
 
-        letter.setId(keyHolder.getKey().longValue());
+        letter.setId((Long) keyHolder.getKey());
         return letter;
     }
 
@@ -73,8 +73,7 @@ public class LetterRepository {
                     "summary = ?, " +
                     "number_of_pages = ?, " +
                     "release_date = ?, " +
-                    "registration_date = ?, " +
-                    "holder_id = ? " +
+                    "registration_date = ? " +
                     "WHERE id = ?";
 
             jdbcTemplate.update(sql,
@@ -83,14 +82,13 @@ public class LetterRepository {
                     letter.getNumberOfPages(),
                     Date.valueOf(letter.getReleaseDate()),
                     Date.valueOf(letter.getRegistrationDate()),
-                    letter.getHolderId(),
                     letter.getId()
             );
         });
 
 
         if (letterFound.isPresent())
-            return Optional.ofNullable(letter);
+            return Optional.of(letter);
         else
             return letterFound;
     }
@@ -101,6 +99,32 @@ public class LetterRepository {
             String sql = "DELETE FROM Letters WHERE id = ?";
             jdbcTemplate.update(sql, id);
         });
+        return letterFound;
+    }
+
+    public Optional<Letter> hold(long letterId, long holderId) {
+        Optional<Letter> letterFound = get(letterId);
+        letterFound.ifPresent((b) -> {
+            String sql = "UPDATE Letters SET " +
+                    "holder_id = ? " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, holderId, letterId);
+            letterFound.get().setHolderId(holderId);
+        });
+
+        return letterFound;
+    }
+
+    public Optional<Letter> release(long letterId) {
+        Optional<Letter> letterFound = get(letterId);
+        letterFound.ifPresent((b) -> {
+            String sql = "UPDATE Letters SET " +
+                    "holder_id = NULL " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, letterId);
+            letterFound.get().setHolderId(null);
+        });
+
         return letterFound;
     }
 }

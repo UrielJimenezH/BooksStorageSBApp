@@ -1,9 +1,13 @@
 package com.example.booksStorage.letters;
 
 import com.example.booksStorage.Item;
+import com.example.booksStorage.exceptionsHandling.CanNotReleaseException;
+import com.example.booksStorage.exceptionsHandling.ElementAlreadyBeingHoldException;
 import com.example.booksStorage.observer.EventManager;
 import com.example.booksStorage.observer.EventManagerConfig;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
+import com.example.booksStorage.user.User;
+import com.example.booksStorage.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -13,6 +17,8 @@ import java.util.Optional;
 public class LetterService {
     @Autowired
     private LetterRepository repository;
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private EventManager<Item> eventManager;
 
@@ -39,9 +45,33 @@ public class LetterService {
     }
 
     public Letter delete(Long id) {
-        Letter l = repository.delete(id)
+        return repository.delete(id)
                 .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
+    }
 
-        return l;
+    public Letter hold(Long letterId, Long holderId) {
+        Optional<User> userFound = userRepository.get(holderId);
+        if (userFound.isPresent()) {
+            Letter letterFound = get(letterId);
+            if (letterFound.getHolderId() != null && holderId.longValue() != letterFound.getHolderId().longValue())
+                throw new ElementAlreadyBeingHoldException();
+            else
+                return repository.hold(letterId, holderId)
+                        .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+        } else
+            throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
+    }
+
+    public Letter release(Long letterId, Long holderId) {
+        Optional<User> userFound = userRepository.get(holderId);
+        if (userFound.isPresent()) {
+            Letter letterFound = get(letterId);
+            if (letterFound.getHolderId() != null && holderId.longValue() != letterFound.getHolderId().longValue())
+                throw new CanNotReleaseException(holderId);
+            else
+                return repository.release(letterId)
+                        .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+        } else
+            throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }
 }

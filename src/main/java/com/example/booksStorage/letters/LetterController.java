@@ -1,5 +1,6 @@
 package com.example.booksStorage.letters;
 
+import com.example.booksStorage.user.Holder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,14 @@ public class LetterController {
     @DeleteMapping("{letterId}")
     public ResponseEntity<?> delete(@PathVariable("letterId") Long letterId) {
         return ResponseEntity.ok(service.delete(letterId));
+    }
+    @PostMapping("{letterId}/hold")
+    public ResponseEntity<Letter> holdLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.hold(letterId, user.getHolderId()));
+    }
+
+    @PostMapping("{letterId}/release")
+    public ResponseEntity<Letter> releaseLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.release(letterId, user.getHolderId()));
     }
 }
