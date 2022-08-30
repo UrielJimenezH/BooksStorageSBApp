@@ -1,10 +1,10 @@
-DROP DATABASE IF EXISTS BooksStorage;
-
-CREATE DATABASE BooksStorage;
-
-USE BooksStorage;
-
-DROP TABLE IF EXISTS Users;
+--DROP DATABASE IF EXISTS BooksStorage;
+--
+--CREATE DATABASE BooksStorage;
+--
+--USE BooksStorage;
+--
+--DROP TABLE IF EXISTS Users;
 
 CREATE TABLE Users(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -16,6 +16,7 @@ CREATE TABLE Users(
     password VARCHAR(255) NOT NULL,
     registration_date DATE NOT NULL
 );
+
 
 DROP TABLE IF EXISTS Books;
 
@@ -50,9 +51,9 @@ CREATE TABLE Letters(
 );
 
 
-DROP TABLE IF EXISTS Newspaper;
+DROP TABLE IF EXISTS Newspapers;
 
-CREATE TABLE Newspaper(
+CREATE TABLE Newspapers(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     publisher VARCHAR(255) NOT NULL,
@@ -66,9 +67,9 @@ CREATE TABLE Newspaper(
 );
 
 
-DROP TABLE IF EXISTS Magazine;
+DROP TABLE IF EXISTS Magazines;
 
-CREATE TABLE Magazine(
+CREATE TABLE Magazines(
     id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     publisher VARCHAR(255) NOT NULL,
