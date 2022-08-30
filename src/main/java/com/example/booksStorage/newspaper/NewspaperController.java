@@ -1,5 +1,6 @@
 package com.example.booksStorage.newspaper;
 
+import com.example.booksStorage.user.Holder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +43,15 @@ public class NewspaperController {
     @DeleteMapping("{newspaperId}")
     public ResponseEntity<?> delete(@PathVariable("newspaperId") Long newspaperId) {
         return ResponseEntity.ok(service.delete(newspaperId));
+    }
+
+    @PostMapping("{newspaperId}/hold")
+    public ResponseEntity<Newspaper> holdNewspaper(@PathVariable("newspaperId") Long newspaperId, @RequestBody Holder user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.hold(newspaperId, user.getHolderId()));
+    }
+
+    @PostMapping("{newspaperId}/release")
+    public ResponseEntity<Newspaper> releaseNewspaper(@PathVariable("newspaperId") Long newspaperId, @RequestBody Holder user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.release(newspaperId, user.getHolderId()));
     }
 }

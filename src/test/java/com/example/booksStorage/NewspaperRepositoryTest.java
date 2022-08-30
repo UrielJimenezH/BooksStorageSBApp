@@ -29,6 +29,7 @@ public class NewspaperRepositoryTest {
                 .ignoreFailedDrops(true)
                 .addScript("schema.sql")
                 .addScript("newspapers-test-data.sql")
+                .addScript("users-test-data.sql")
                 .build();
 
         repository = new NewspaperRepository();
@@ -124,5 +125,33 @@ public class NewspaperRepositoryTest {
         }, () -> {
             throw new RuntimeException("Not found");
         });
+    }
+
+
+    @Test
+    public void hold_ReturnsEmptyOptional_WhenNewspaperWithGivenIdDoesNotExist() {
+        Optional<Newspaper> newspaperFound = repository.hold(60L, 1L);
+        assertFalse(newspaperFound.isPresent());
+    }
+
+    @Test
+    public void hold_ReturnsANewspaper_WhenNewspaperAndUserWithGivenIdsExist() {
+        long holderId = 2L;
+        Optional<Newspaper> newspaperFound = repository.hold(5L, holderId);
+        assertTrue(newspaperFound.isPresent());
+        assertEquals(holderId, newspaperFound.get().getHolderId().longValue());
+    }
+
+    @Test
+    public void release_ReturnsEmptyOptional_WhenNewspaperWithGivenIdDoesNotExist() {
+        Optional<Newspaper> newspaperFound = repository.release(60L);
+        assertFalse(newspaperFound.isPresent());
+    }
+
+    @Test
+    public void release_ReturnsANewspaper_WhenNewspaperWithGivenIdExists() {
+        Optional<Newspaper> newspaperFound = repository.release(5L);
+        assertTrue(newspaperFound.isPresent());
+        assertNull(newspaperFound.get().getHolderId());
     }
 }

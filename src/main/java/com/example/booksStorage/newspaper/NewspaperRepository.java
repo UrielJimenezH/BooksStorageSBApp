@@ -1,6 +1,7 @@
 package com.example.booksStorage.newspaper;
 
 import com.example.booksStorage.newspaper.Newspaper;
+import com.example.booksStorage.newspaper.Newspaper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -65,7 +66,7 @@ public class NewspaperRepository {
             return statement;
         }, keyHolder);
 
-        newspaper.setId(keyHolder.getKey().longValue());
+        newspaper.setId((Long) keyHolder.getKey());
         return newspaper;
     }
 
@@ -78,8 +79,7 @@ public class NewspaperRepository {
                     "summary = ?, " +
                     "number_of_pages = ?, " +
                     "release_date = ?, " +
-                    "registration_date = ?, " +
-                    "holder_id = ? " +
+                    "registration_date = ? " +
                     "WHERE id = ?";
 
             jdbcTemplate.update(sql,
@@ -89,7 +89,6 @@ public class NewspaperRepository {
                     newspaper.getNumberOfPages(),
                     Date.valueOf(newspaper.getReleaseDate()),
                     Date.valueOf(newspaper.getRegistrationDate()),
-                    newspaper.getHolderId(),
                     newspaper.getId()
             );
         });
@@ -106,6 +105,33 @@ public class NewspaperRepository {
             String sql = "DELETE FROM Newspapers WHERE id = ?";
             jdbcTemplate.update(sql, id);
         });
+
+        return newspaperFound;
+    }
+
+    public Optional<Newspaper> hold(long newspaperId, long holderId) {
+        Optional<Newspaper> newspaperFound = get(newspaperId);
+        newspaperFound.ifPresent((b) -> {
+            String sql = "UPDATE Newspapers SET " +
+                    "holder_id = ? " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, holderId, newspaperId);
+            newspaperFound.get().setHolderId(holderId);
+        });
+
+        return newspaperFound;
+    }
+
+    public Optional<Newspaper> release(long newspaperId) {
+        Optional<Newspaper> newspaperFound = get(newspaperId);
+        newspaperFound.ifPresent((b) -> {
+            String sql = "UPDATE Newspapers SET " +
+                    "holder_id = NULL " +
+                    "WHERE id = ?";
+            jdbcTemplate.update(sql, newspaperId);
+            newspaperFound.get().setHolderId(null);
+        });
+
         return newspaperFound;
     }
 }
