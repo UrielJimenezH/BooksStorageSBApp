@@ -12,67 +12,82 @@ import com.example.booksStorage.repository.NewspaperRepository;
 import com.example.booksStorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class NewspaperService {
-    @Autowired
-    private NewspaperRepository repository;
-    @Autowired
-    private UserRepository userRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private EventManager<Item> eventManager;
 
     public List<Newspaper> getAll() {
-        return repository.getAll();
+        Query query = entityManager.createNamedQuery("query_find_all_newspapers", Newspaper.class);
+        return query.getResultList();
     }
 
     public Newspaper get(Long id) {
-        return repository.get(id)
+        return Optional.ofNullable(entityManager.find(Newspaper.class, id))
                 .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + id + " does not exist"));
     }
 
     public Newspaper add(Newspaper newspaper) {
-        Newspaper newNewspaper = repository.save(newspaper);
+        entityManager.persist(newspaper);
         eventManager.notifySubscribers(EventManagerConfig.BOOK_CREATION_EVENT, newspaper);
-        return newNewspaper;
+        return newspaper;
     }
 
-    public Newspaper update(Long id, Newspaper newNewspaper) {
-        newNewspaper.setId(id);
-        Optional<Newspaper> updatedNewspaper = repository.update(newNewspaper);
-        return updatedNewspaper
-                .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + id + " does not exist"));
+    public Newspaper update(Long id, Newspaper newspaper) {
+        Optional<Newspaper> newspaperFound = Optional.ofNullable(entityManager.find(Newspaper.class, id));
+
+        if (newspaperFound.isPresent()) {
+            newspaper.setId(id);
+            newspaper.setHolderId(newspaperFound.get().getHolderId());
+            entityManager.merge(newspaper);
+        } else
+            throw new NoSuchElementFoundException("Newspaper with id " + id + " does not exist");
+
+        return newspaper;
     }
 
-    public Newspaper delete(Long id) {
-        return repository.delete(id)
-                .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + id + " does not exist"));
+    public void delete(Long id) {
+        Optional<Newspaper> newspaper = Optional.ofNullable(entityManager.find(Newspaper.class, id));
+
+        newspaper.ifPresent((n) -> entityManager.remove(n));
     }
 
     public Newspaper hold(Long newspaperId, Long holderId) {
-        Optional<User> userFound = userRepository.get(holderId);
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, holderId));
+
         if (userFound.isPresent()) {
             Newspaper newspaperFound = get(newspaperId);
             if (newspaperFound.getHolderId() != null && holderId.longValue() != newspaperFound.getHolderId().longValue())
                 throw new ElementAlreadyBeingHoldException();
-            else
-                return repository.hold(newspaperId, holderId)
-                        .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + newspaperId + " does not exist"));
+            else {
+                newspaperFound.setHolderId(holderId);
+                return entityManager.merge(newspaperFound);
+            }
         } else
             throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }
 
     public Newspaper release(Long newspaperId, Long holderId) {
-        Optional<User> userFound = userRepository.get(holderId);
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, holderId));
         if (userFound.isPresent()) {
             Newspaper newspaperFound = get(newspaperId);
             if (newspaperFound.getHolderId() != null && holderId.longValue() != newspaperFound.getHolderId().longValue())
                 throw new CanNotReleaseException(holderId);
-            else
-                return repository.release(newspaperId)
-                        .orElseThrow(() -> new NoSuchElementFoundException("Newspaper with id " + newspaperId + " does not exist"));
+            else {
+                newspaperFound.setHolderId(null);
+                return entityManager.merge(newspaperFound);
+            }
         } else
             throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }
