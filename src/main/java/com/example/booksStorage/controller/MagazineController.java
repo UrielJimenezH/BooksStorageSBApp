@@ -44,16 +44,19 @@ public class MagazineController {
 
     @DeleteMapping("{magazineId}")
     public ResponseEntity<?> delete(@PathVariable("magazineId") Long magazineId) {
-        return ResponseEntity.ok(service.delete(magazineId));
+        service.delete(magazineId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("{magazineId}/hold")
+    @PutMapping("{magazineId}/hold")
     public ResponseEntity<Magazine> holdMagazine(@PathVariable("magazineId") Long magazineId, @RequestBody Holder user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.hold(magazineId, user.getHolderId()));
+        Magazine magazine = service.hold(magazineId, user.getHolderId());
+        return ResponseEntity.status(HttpStatus.OK).body(magazine);
     }
 
-    @PostMapping("{magazineId}/release")
+    @PutMapping("{magazineId}/release")
     public ResponseEntity<Magazine> releaseMagazine(@PathVariable("magazineId") Long magazineId, @RequestBody Holder user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.release(magazineId, user.getHolderId()));
+        Magazine magazine = service.release(magazineId, user.getHolderId());
+        return ResponseEntity.status(HttpStatus.OK).body(magazine);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.booksStorage.service;
 
 import com.example.booksStorage.domain.Item;
+import com.example.booksStorage.domain.Letter;
 import com.example.booksStorage.domain.Magazine;
 import com.example.booksStorage.exceptionsHandling.CanNotReleaseException;
 import com.example.booksStorage.exceptionsHandling.ElementAlreadyBeingHoldException;
@@ -12,68 +13,84 @@ import com.example.booksStorage.repository.MagazineRepository;
 import com.example.booksStorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class MagazineService {
-    @Autowired
-    private MagazineRepository repository;
-    @Autowired
-    private UserRepository userRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private EventManager<Item> eventManager;
 
     public List<Magazine> getAll() {
-        return repository.getAll();
+        Query query = entityManager.createNamedQuery("query_find_all_magazines", Magazine.class);
+        return query.getResultList();
     }
 
     public Magazine get(Long id) {
-        return repository.get(id)
+        return Optional.ofNullable(entityManager.find(Magazine.class, id))
                 .orElseThrow(() -> new NoSuchElementFoundException("Magazine with id " + id + " does not exist"));
     }
 
     public Magazine add(Magazine magazine) {
-        Magazine newMagazine = repository.save(magazine);
+        entityManager.persist(magazine);
         eventManager.notifySubscribers(EventManagerConfig.BOOK_CREATION_EVENT, magazine);
-        return newMagazine;
+        return magazine;
     }
 
-    public Magazine update(Long id, Magazine newMagazine) {
-        newMagazine.setId(id);
-        Optional<Magazine> updatedMagazine = repository.update(newMagazine);
-        return updatedMagazine
-                .orElseThrow(() -> new NoSuchElementFoundException("Magazine with id " + id + " does not exist"));
+    public Magazine update(Long id, Magazine magazine) {
+        Optional<Magazine> magazineFound = Optional.ofNullable(entityManager.find(Magazine.class, id));
+
+        if (magazineFound.isPresent()) {
+            magazine.setId(id);
+            magazine.setHolderId(magazineFound.get().getHolderId());
+            entityManager.merge(magazine);
+        } else
+               throw new NoSuchElementFoundException("Magazine with id " + id + " does not exist");
+
+        return magazine;
     }
 
-    public Magazine delete(Long id) {
-        return repository.delete(id)
-                .orElseThrow(() -> new NoSuchElementFoundException("Magazine with id " + id + " does not exist"));
+    public void delete(Long id) {
+        Optional<Magazine> magazine = Optional.ofNullable(entityManager.find(Magazine.class, id));
+
+        magazine.ifPresent((m) -> entityManager.remove(m));
     }
 
 
     public Magazine hold(Long magazineId, Long holderId) {
-        Optional<User> userFound = userRepository.get(holderId);
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, holderId));
+
         if (userFound.isPresent()) {
             Magazine magazineFound = get(magazineId);
             if (magazineFound.getHolderId() != null && holderId.longValue() != magazineFound.getHolderId().longValue())
                 throw new ElementAlreadyBeingHoldException();
-            else
-                return repository.hold(magazineId, holderId)
-                        .orElseThrow(() -> new NoSuchElementFoundException("Magazine with id " + magazineId + " does not exist"));
+            else {
+                magazineFound.setHolderId(holderId);
+                return entityManager.merge(magazineFound);
+            }
         } else
             throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }
 
     public Magazine release(Long magazineId, Long holderId) {
-        Optional<User> userFound = userRepository.get(holderId);
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, holderId));
+
         if (userFound.isPresent()) {
             Magazine magazineFound = get(magazineId);
             if (magazineFound.getHolderId() != null && holderId.longValue() != magazineFound.getHolderId().longValue())
                 throw new CanNotReleaseException(holderId);
-            else
-                return repository.release(magazineId)
-                        .orElseThrow(() -> new NoSuchElementFoundException("Magazine with id " + magazineId + " does not exist"));
+            else {
+                magazineFound.setHolderId(null);
+                return entityManager.merge(magazineFound);
+            }
         } else
             throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }
