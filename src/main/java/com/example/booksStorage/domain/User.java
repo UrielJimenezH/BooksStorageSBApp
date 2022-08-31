@@ -1,13 +1,19 @@
 package com.example.booksStorage.domain;
 
 import lombok.*;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "Users")
 @Getter
 @Setter
 @ToString
 @EqualsAndHashCode
 public final class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String lastname;
@@ -16,6 +22,10 @@ public final class User {
     private String username;
     private String password;
     private LocalDate registrationDate;
+
+    public User() {
+
+    }
 
     public User(
             String name,

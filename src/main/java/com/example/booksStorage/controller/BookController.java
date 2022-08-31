@@ -44,16 +44,19 @@ public class BookController {
 
     @DeleteMapping("{bookId}")
     public ResponseEntity<?> deleteBook(@PathVariable("bookId") Long bookId) {
-        return ResponseEntity.ok(service.delete(bookId));
+        service.delete(bookId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PostMapping("{bookId}/hold")
+    @PutMapping("{bookId}/hold")
     public ResponseEntity<Book> holdBook(@PathVariable("bookId") Long bookId, @RequestBody Holder user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.hold(bookId, user.getHolderId()));
+        Book book = service.hold(bookId, user.getHolderId());
+        return ResponseEntity.status(HttpStatus.OK).body(book);
     }
 
-    @PostMapping("{bookId}/release")
+    @PutMapping("{bookId}/release")
     public ResponseEntity<Book> releaseBook(@PathVariable("bookId") Long bookId, @RequestBody Holder user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.release(bookId, user.getHolderId()));
+        Book book = service.release(bookId, user.getHolderId());
+        return ResponseEntity.status(HttpStatus.OK).body(book);
     }
 }
