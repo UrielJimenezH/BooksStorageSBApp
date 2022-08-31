@@ -1,5 +1,6 @@
 package com.example.booksStorage.service;
 
+import com.example.booksStorage.domain.Book;
 import com.example.booksStorage.domain.Item;
 import com.example.booksStorage.domain.Letter;
 import com.example.booksStorage.exceptionsHandling.CanNotReleaseException;
@@ -12,67 +13,83 @@ import com.example.booksStorage.repository.LetterRepository;
 import com.example.booksStorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 public class LetterService {
-    @Autowired
-    private LetterRepository repository;
-    @Autowired
-    private UserRepository userRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private EventManager<Item> eventManager;
 
     public List<Letter> getAll() {
-        return repository.getAll();
+        Query query = entityManager.createNamedQuery("query_find_all_letters", Letter.class);
+        return query.getResultList();
     }
 
     public Letter get(Long id) {
-        return repository.get(id)
+        return Optional.ofNullable(entityManager.find(Letter.class, id))
                 .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
     }
 
     public Letter add(Letter letter) {
-        Letter newLetter = repository.save(letter);
+        entityManager.persist(letter);
         eventManager.notifySubscribers(EventManagerConfig.BOOK_CREATION_EVENT, letter);
-        return newLetter;
+        return letter;
     }
 
-    public Letter update(Long id, Letter newLetter) {
-        newLetter.setId(id);
-        Optional<Letter> updatedLetter = repository.update(newLetter);
-        return updatedLetter
-                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
+    public Letter update(Long id, Letter letter) {
+        Optional<Letter> letterFound = Optional.ofNullable(entityManager.find(Letter.class, id));
+
+        if (letterFound.isPresent()) {
+            letter.setId(id);
+            letter.setHolderId(letterFound.get().getHolderId());
+            entityManager.merge(letter);
+        } else
+            throw new NoSuchElementFoundException("Letter with id " + id + " does not exist");
+
+        return letter;
     }
 
-    public Letter delete(Long id) {
-        return repository.delete(id)
-                .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + id + " does not exist"));
+    public void delete(Long id) {
+        Optional<Letter> letter = Optional.ofNullable(entityManager.find(Letter.class, id));
+
+        letter.ifPresent((l) -> entityManager.remove(l));
     }
 
     public Letter hold(Long letterId, Long holderId) {
-        Optional<User> userFound = userRepository.get(holderId);
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, letterId));
+
         if (userFound.isPresent()) {
             Letter letterFound = get(letterId);
             if (letterFound.getHolderId() != null && holderId.longValue() != letterFound.getHolderId().longValue())
                 throw new ElementAlreadyBeingHoldException();
-            else
-                return repository.hold(letterId, holderId)
-                        .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+            else {
+                letterFound.setHolderId(holderId);
+                return entityManager.merge(letterFound);
+            }
         } else
             throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }
 
     public Letter release(Long letterId, Long holderId) {
-        Optional<User> userFound = userRepository.get(holderId);
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, holderId));
+
         if (userFound.isPresent()) {
             Letter letterFound = get(letterId);
             if (letterFound.getHolderId() != null && holderId.longValue() != letterFound.getHolderId().longValue())
                 throw new CanNotReleaseException(holderId);
-            else
-                return repository.release(letterId)
-                        .orElseThrow(() -> new NoSuchElementFoundException("Letter with id " + letterId + " does not exist"));
+            else {
+                letterFound.setHolderId(null);
+                return entityManager.merge(letterFound);
+            }
         } else
             throw new NoSuchElementFoundException("User with id " + holderId + " does not exist");
     }

@@ -44,15 +44,18 @@ public class LetterController {
 
     @DeleteMapping("{letterId}")
     public ResponseEntity<?> delete(@PathVariable("letterId") Long letterId) {
-        return ResponseEntity.ok(service.delete(letterId));
+        service.delete(letterId);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
-    @PostMapping("{letterId}/hold")
+    @PutMapping("{letterId}/hold")
     public ResponseEntity<Letter> holdLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.hold(letterId, user.getHolderId()));
+        Letter letter = service.hold(letterId, user.getHolderId());
+        return ResponseEntity.status(HttpStatus.OK).body(letter);
     }
 
-    @PostMapping("{letterId}/release")
+    @PutMapping("{letterId}/release")
     public ResponseEntity<Letter> releaseLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.release(letterId, user.getHolderId()));
+        Letter letter = service.release(letterId, user.getHolderId());
+        return ResponseEntity.status(HttpStatus.OK).body(letter);
     }
 }
