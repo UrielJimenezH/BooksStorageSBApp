@@ -2,39 +2,45 @@ package com.example.booksStorage.service;
 
 import com.example.booksStorage.domain.User;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
-import com.example.booksStorage.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.*;
 
 @Service
+@Transactional
 public class UserService {
-    @Autowired
-    private UserRepository repository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public List<User> getAll() {
-        return repository.getAll();
+        Query query = entityManager.createNamedQuery("query_find_all_users", User.class);
+        return query.getResultList();
     }
 
     public User get(Long id) {
-        return repository.get(id)
+        return Optional.ofNullable(entityManager.find(User.class, id))
                 .orElseThrow(() -> new NoSuchElementFoundException("User with id " + id + " does not exist"));
     }
 
     public User add(User user) {
-        User newUser = repository.save(user);
-        return newUser;
+        entityManager.persist(user);
+        return user;
     }
 
-    public User update(Long id, User newUser) {
-        newUser.setId(id);
-        Optional<User> updatedUser = repository.update(newUser);
-        return updatedUser
-                .orElseThrow(() -> new NoSuchElementFoundException("User with id " + id + " does not exist"));
+    public User update(Long id, User user) {
+        get(id);
+
+        user.setId(id);
+        entityManager.merge(user);
+        return user;
     }
 
-    public User delete(Long id) {
-        return repository.delete(id)
-                .orElseThrow(() -> new NoSuchElementFoundException("User with id " + id + " does not exist"));
+    public void delete(Long id) {
+        Optional<User> user = Optional.ofNullable(entityManager.find(User.class, id));
+
+        user.ifPresent((u) -> entityManager.remove(u));
     }
 }

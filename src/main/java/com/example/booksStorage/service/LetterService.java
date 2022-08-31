@@ -1,6 +1,5 @@
 package com.example.booksStorage.service;
 
-import com.example.booksStorage.domain.Book;
 import com.example.booksStorage.domain.Item;
 import com.example.booksStorage.domain.Letter;
 import com.example.booksStorage.exceptionsHandling.CanNotReleaseException;
@@ -9,8 +8,6 @@ import com.example.booksStorage.observer.EventManager;
 import com.example.booksStorage.observer.EventManagerConfig;
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.domain.User;
-import com.example.booksStorage.repository.LetterRepository;
-import com.example.booksStorage.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
