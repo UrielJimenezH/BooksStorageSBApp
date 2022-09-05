@@ -2,7 +2,6 @@ package com.example.booksStorage;
 
 import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import com.example.booksStorage.domain.User;
-import com.example.booksStorage.repository.UserRepository;
 import com.example.booksStorage.service.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,18 +9,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
     @Mock
-    private UserRepository repository;
+    private EntityManager entityManager;
     @InjectMocks
     private UserService service;
+    @Mock
+    private TypedQuery<User> query;
+    private final String namedQuery = "query_find_all_users";
     private final static User user = new User(
             "Fernando",
             "Lopez",
@@ -33,14 +36,17 @@ public class UserServiceTest {
 
     @Test
     public void getAll_ReturnsEmptyList() {
-        Mockito.when(repository.getAll()).thenReturn(Collections.emptyList());
+        Mockito.when(query.getResultList()).thenReturn(Collections.emptyList());
+        Mockito.when(entityManager.createNamedQuery(namedQuery, User.class)).thenReturn(query);
 
         assertEquals(0, service.getAll().size());
     }
 
     @Test
     public void getAll_ReturnsList() {
-        Mockito.when(repository.getAll()).thenReturn(List.of(user));
+        List<User> users = List.of(user);
+        Mockito.when(query.getResultList()).thenReturn(users);
+        Mockito.when(entityManager.createNamedQuery(namedQuery, User.class)).thenReturn(query);
 
         assertEquals(1, service.getAll().size());
     }
@@ -48,7 +54,7 @@ public class UserServiceTest {
     @Test(expected = NoSuchElementFoundException.class)
     public void get_ThrowsException_WhenUserWasNotFound() {
         long id = 1;
-        Mockito.when(repository.get(id)).thenThrow(new NoSuchElementFoundException("User with id " + id + " does not exist"));
+        Mockito.when(entityManager.find(User.class, id)).thenReturn(null);
 
         service.get(id);
     }
@@ -56,36 +62,36 @@ public class UserServiceTest {
     @Test
     public void get_ReturnsUser_WhenUserExists() {
         long id = 1;
-        Mockito.when(repository.get(id)).thenReturn(Optional.of(user));
+        Mockito.when(entityManager.find(User.class, id)).thenReturn(user);
 
         assertEquals(user, service.get(id));
     }
 
     @Test
     public void add_ReturnsUser() {
-        Mockito.when(repository.save(user)).thenReturn(user);
-
         assertNotNull(service.add(user));
     }
 
     @Test(expected = NoSuchElementFoundException.class)
     public void update_ThrowsException_WhenUserWasNotFound() {
-        Mockito.when(repository.update(user)).thenThrow(new NoSuchElementFoundException("User with id 1 does not exist"));
+        long userId = 10L;
+        Mockito.when(entityManager.find(User.class, userId)).thenReturn(null);
 
-        service.update(user.getId(), user);
+        service.update(userId, user);
     }
 
     @Test
     public void update_ReturnsUser_WhenUserExists() {
-        Mockito.when(repository.update(user)).thenReturn(Optional.of(user));
+        long userId = 10L;
+        Mockito.when(entityManager.find(User.class, userId)).thenReturn(user);
 
-        assertEquals(user, service.update(user.getId(), user));
+        assertEquals(user, service.update(userId, user));
     }
 
-    @Test(expected = NoSuchElementFoundException.class)
-    public void delete_ThrowsException_WhenUserWasNotFound() {
+    @Test
+    public void delete_DoesNotThrowException_WhenUserWasNotFound() {
         long id = 1;
-        Mockito.when(repository.delete(id)).thenThrow(new NoSuchElementFoundException("User with id " + id + " does not exist"));
+        Mockito.when(entityManager.find(User.class, id)).thenReturn(null);
 
         service.delete(id);
     }
@@ -93,9 +99,9 @@ public class UserServiceTest {
     @Test
     public void delete_ReturnsUser_WhenUserExists() {
         long id = 1;
-        Mockito.when(repository.delete(id)).thenReturn(Optional.of(user));
+        Mockito.when(entityManager.find(User.class, id)).thenReturn(user);
 
-        assertEquals(user, service.delete(id));
+        service.delete(id);
     }
 }
 

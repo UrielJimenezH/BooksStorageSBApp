@@ -62,7 +62,7 @@ public class LetterService {
     }
 
     public Letter hold(Long letterId, Long holderId) {
-        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, letterId));
+        Optional<User> userFound = Optional.ofNullable(entityManager.find(User.class, holderId));
 
         if (userFound.isPresent()) {
             Letter letterFound = get(letterId);
