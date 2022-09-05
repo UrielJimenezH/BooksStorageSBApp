@@ -1,28 +1,22 @@
-package com.example.booksStorage.domain;
+package com.example.booksStorage.dto;
 
 import com.example.booksStorage.validations.Validations;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "Magazines")
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@NamedQuery(query = "SELECT m FROM Magazine m", name = "query_find_all_magazines")
 @NoArgsConstructor
-public final class Magazine extends Item {
-    @Column(name = "title")
+public final class MagazineDto extends ItemDto {
     private String title;
-    @Column(name = "publisher")
     private String publisher;
 
-    public Magazine(
+    public MagazineDto(
             String summary,
             Integer numberOfPages,
             LocalDate releaseDate,
