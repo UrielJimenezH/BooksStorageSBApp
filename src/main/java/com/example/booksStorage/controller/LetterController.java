@@ -1,7 +1,7 @@
 package com.example.booksStorage.controller;
 
 import com.example.booksStorage.converter.LetterConverter;
-import com.example.booksStorage.domain.Holder;
+import com.example.booksStorage.dto.HolderDto;
 import com.example.booksStorage.dto.LetterDto;
 import com.example.booksStorage.service.LetterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class LetterController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @PutMapping("{letterId}/hold")
-    public ResponseEntity<LetterDto> holdLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
+    public ResponseEntity<LetterDto> holdLetter(@PathVariable("letterId") Long letterId, @RequestBody HolderDto user) {
         LetterDto letter = converter.entityToDto(
                 service.hold(letterId, user.getHolderId())
         );
@@ -70,7 +70,7 @@ public class LetterController {
     }
 
     @PutMapping("{letterId}/release")
-    public ResponseEntity<LetterDto> releaseLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
+    public ResponseEntity<LetterDto> releaseLetter(@PathVariable("letterId") Long letterId, @RequestBody HolderDto user) {
         LetterDto letter = converter.entityToDto(
                 service.release(letterId, user.getHolderId())
         );

@@ -1,10 +1,10 @@
-package com.example.booksStorage.domain;
+package com.example.booksStorage.dto;
 
 import com.example.booksStorage.validations.Validations;
 import lombok.Getter;
 
 @Getter
-public class Holder {
+public class HolderDto {
     private Long holderId;
 
     public void setHolderId(Long holderId) {

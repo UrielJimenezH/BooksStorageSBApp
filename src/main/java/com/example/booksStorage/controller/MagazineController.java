@@ -1,7 +1,7 @@
 package com.example.booksStorage.controller;
 
 import com.example.booksStorage.converter.MagazineConverter;
-import com.example.booksStorage.domain.Holder;
+import com.example.booksStorage.dto.HolderDto;
 import com.example.booksStorage.dto.MagazineDto;
 import com.example.booksStorage.service.MagazineService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,13 +61,13 @@ public class MagazineController {
     }
 
     @PutMapping("{magazineId}/hold")
-    public ResponseEntity<MagazineDto> holdMagazineDto(@PathVariable("magazineId") Long magazineId, @RequestBody Holder user) {
+    public ResponseEntity<MagazineDto> holdMagazineDto(@PathVariable("magazineId") Long magazineId, @RequestBody HolderDto user) {
         MagazineDto magazine = converter.entityToDto(service.hold(magazineId, user.getHolderId()));
         return ResponseEntity.status(HttpStatus.OK).body(magazine);
     }
 
     @PutMapping("{magazineId}/release")
-    public ResponseEntity<MagazineDto> releaseMagazineDto(@PathVariable("magazineId") Long magazineId, @RequestBody Holder user) {
+    public ResponseEntity<MagazineDto> releaseMagazineDto(@PathVariable("magazineId") Long magazineId, @RequestBody HolderDto user) {
         MagazineDto magazine = converter.entityToDto(service.release(magazineId, user.getHolderId()));
         return ResponseEntity.status(HttpStatus.OK).body(magazine);
     }

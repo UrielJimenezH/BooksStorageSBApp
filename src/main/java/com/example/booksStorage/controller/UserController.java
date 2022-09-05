@@ -1,6 +1,7 @@
 package com.example.booksStorage.controller;
 
-import com.example.booksStorage.domain.User;
+import com.example.booksStorage.converter.UserConverter;
+import com.example.booksStorage.dto.UserDto;
 import com.example.booksStorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,34 +13,44 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final UserService service;
-
     @Autowired
-    public UserController(UserService service) {
-        this.service = service;
-    }
+    private UserService service;
+    @Autowired
+    private UserConverter converter;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(service.getAll());
+        public ResponseEntity<List<UserDto>> getAllUsers() {
+        return ResponseEntity.ok(
+                converter.entityListToDtoList(service.getAll())
+        );
     }
 
     @GetMapping("{userId}")
     public ResponseEntity<?> getUser(@PathVariable("userId") Long userId) {
-         return ResponseEntity.ok(service.get(userId));
+         return ResponseEntity.ok(
+                 converter.entityToDto(service.get(userId))
+         );
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(user));
+    public ResponseEntity<UserDto> addUser(@RequestBody UserDto user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                converter.entityToDto(
+                        service.add(converter.dtoToEntity(user))
+                )
+        );
     }
 
     @PutMapping("{userId}")
     public ResponseEntity<?> updateUser(
             @PathVariable("userId") Long userId,
-            @RequestBody User user
+            @RequestBody UserDto user
     ) {
-        return ResponseEntity.ok(service.update(userId, user));
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                converter.entityToDto(
+                        service.update(userId, converter.dtoToEntity(user))
+                )
+        );
     }
 
     @DeleteMapping("{userId}")

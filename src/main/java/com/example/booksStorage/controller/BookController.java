@@ -3,7 +3,7 @@ package com.example.booksStorage.controller;
 import com.example.booksStorage.converter.BookConverter;
 import com.example.booksStorage.dto.BookDto;
 import com.example.booksStorage.service.BookService;
-import com.example.booksStorage.domain.Holder;
+import com.example.booksStorage.dto.HolderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +60,7 @@ public class BookController {
     }
 
     @PutMapping("{bookId}/hold")
-    public ResponseEntity<BookDto> holdBook(@PathVariable("bookId") Long bookId, @RequestBody Holder user) {
+    public ResponseEntity<BookDto> holdBook(@PathVariable("bookId") Long bookId, @RequestBody HolderDto user) {
         BookDto book = converter.entityToDto(
                 service.hold(bookId, user.getHolderId())
         );
@@ -68,7 +68,7 @@ public class BookController {
     }
 
     @PutMapping("{bookId}/release")
-    public ResponseEntity<BookDto> releaseBook(@PathVariable("bookId") Long bookId, @RequestBody Holder user) {
+    public ResponseEntity<BookDto> releaseBook(@PathVariable("bookId") Long bookId, @RequestBody HolderDto user) {
         BookDto book = converter.entityToDto(
                 service.release(bookId, user.getHolderId())
         );

@@ -1,7 +1,7 @@
 package com.example.booksStorage.controller;
 
 import com.example.booksStorage.converter.NewspaperConverter;
-import com.example.booksStorage.domain.Holder;
+import com.example.booksStorage.dto.HolderDto;
 import com.example.booksStorage.dto.NewspaperDto;
 import com.example.booksStorage.service.NewspaperService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,13 +60,13 @@ public class NewspaperController {
     }
 
     @PutMapping("{newspaperId}/hold")
-    public ResponseEntity<NewspaperDto> holdNewspaper(@PathVariable("newspaperId") Long newspaperId, @RequestBody Holder user) {
+    public ResponseEntity<NewspaperDto> holdNewspaper(@PathVariable("newspaperId") Long newspaperId, @RequestBody HolderDto user) {
         NewspaperDto newspaper = converter.entityToDto(service.hold(newspaperId, user.getHolderId()));
         return ResponseEntity.status(HttpStatus.OK).body(newspaper);
     }
 
     @PutMapping("{newspaperId}/release")
-    public ResponseEntity<NewspaperDto> releaseNewspaper(@PathVariable("newspaperId") Long newspaperId, @RequestBody Holder user) {
+    public ResponseEntity<NewspaperDto> releaseNewspaper(@PathVariable("newspaperId") Long newspaperId, @RequestBody HolderDto user) {
         NewspaperDto newspaper = converter.entityToDto(service.release(newspaperId, user.getHolderId()));
         return ResponseEntity.status(HttpStatus.OK).body(newspaper);
     }
