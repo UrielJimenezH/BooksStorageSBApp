@@ -1,28 +1,20 @@
-package com.example.booksStorage.domain;
+package com.example.booksStorage.dto;
 
 import com.example.booksStorage.validations.Validations;
 import lombok.*;
-import javax.persistence.*;
 import java.time.LocalDate;
 
-@Entity
-@Table(name = "Books")
 @Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
-@NamedQuery(query = "SELECT b FROM Book b", name = "query_find_all_books")
-public final class Book extends Item {
-    @Column(name = "title")
+public final class BookDto extends ItemDto {
     private String title;
-    @Column(name = "author")
     private String author;
-    @Column(name = "publisher")
     private String publisher;
-    @Column(name = "edition")
     private String edition;
 
-    public Book(
+    public BookDto(
             String summary,
             Integer numberOfPages,
             LocalDate releaseDate,
