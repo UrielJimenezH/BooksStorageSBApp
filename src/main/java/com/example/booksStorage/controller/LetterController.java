@@ -1,7 +1,8 @@
 package com.example.booksStorage.controller;
 
-import com.example.booksStorage.domain.Letter;
+import com.example.booksStorage.converter.LetterConverter;
 import com.example.booksStorage.domain.Holder;
+import com.example.booksStorage.dto.LetterDto;
 import com.example.booksStorage.service.LetterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,34 +13,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/letters")
 public class LetterController {
-    private final LetterService service;
-
     @Autowired
-    public LetterController(LetterService service) {
-        this.service = service;
-    }
+    private LetterService service;
+    @Autowired
+    private LetterConverter converter;
 
     @GetMapping
-    public ResponseEntity<List<Letter>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+    public ResponseEntity<List<LetterDto>> getAll() {
+        return ResponseEntity.ok(
+                converter.entityListToDtoList(service.getAll()
+                )
+        );
     }
 
     @GetMapping("{letterId}")
     public ResponseEntity<?> get(@PathVariable("letterId") Long letterId) {
-        return ResponseEntity.ok(service.get(letterId));
+        return ResponseEntity.ok(
+                converter.entityToDto(
+                        service.get(letterId)
+                )
+        );
     }
 
     @PostMapping
-    public ResponseEntity<Letter> add(@RequestBody Letter letter) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.add(letter));
+    public ResponseEntity<LetterDto> add(@RequestBody LetterDto letter) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                converter.entityToDto(
+                        service.add(converter.dtoToEntity(letter))
+                )
+        );
     }
 
     @PutMapping("{letterId}")
     public ResponseEntity<?> update(
             @PathVariable("letterId") Long letterId,
-            @RequestBody Letter letter
+            @RequestBody LetterDto letter
     ) {
-        return ResponseEntity.ok(service.update(letterId, letter));
+        return ResponseEntity.ok(
+                converter.entityToDto(
+                        service.update(letterId, converter.dtoToEntity(letter))
+                )
+        );
     }
 
     @DeleteMapping("{letterId}")
@@ -48,14 +62,18 @@ public class LetterController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
     @PutMapping("{letterId}/hold")
-    public ResponseEntity<Letter> holdLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
-        Letter letter = service.hold(letterId, user.getHolderId());
+    public ResponseEntity<LetterDto> holdLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
+        LetterDto letter = converter.entityToDto(
+                service.hold(letterId, user.getHolderId())
+        );
         return ResponseEntity.status(HttpStatus.OK).body(letter);
     }
 
     @PutMapping("{letterId}/release")
-    public ResponseEntity<Letter> releaseLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
-        Letter letter = service.release(letterId, user.getHolderId());
+    public ResponseEntity<LetterDto> releaseLetter(@PathVariable("letterId") Long letterId, @RequestBody Holder user) {
+        LetterDto letter = converter.entityToDto(
+                service.release(letterId, user.getHolderId())
+        );
         return ResponseEntity.status(HttpStatus.OK).body(letter);
     }
 }
