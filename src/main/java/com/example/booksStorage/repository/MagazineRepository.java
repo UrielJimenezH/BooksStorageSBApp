@@ -1,5 +1,6 @@
 package com.example.booksStorage.repository;
 
+import com.example.booksStorage.domain.Book;
 import com.example.booksStorage.domain.Magazine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,11 +37,12 @@ public class MagazineRepository {
 
     public Optional<Magazine> get(Long id) {
         String sql = "SELECT * FROM Magazines WHERE id = ?";
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, rowMapper, id));
-        } catch (EmptyResultDataAccessException e) {
+        List<Magazine> magazines = jdbcTemplate.query(sql, rowMapper, id);
+
+        if (magazines.isEmpty())
             return Optional.empty();
-        }
+        else
+            return magazines.stream().findFirst();
     }
 
     public List<Magazine> getAll() {

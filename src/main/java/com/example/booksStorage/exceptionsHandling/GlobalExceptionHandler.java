@@ -1,5 +1,6 @@
 package com.example.booksStorage.exceptionsHandling;
 
+import com.example.booksStorage.exceptionshandling.NoSuchElementFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Value("${reflectoring.trace:false}")
     private boolean printStackTrace;
 
-    //Todo this method is not being called !!!
     @ExceptionHandler(HttpMessageConversionException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleIllegalArgumentException(
@@ -32,7 +32,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    //Todo this method is not being called !!!
+    @ExceptionHandler(NoSuchElementFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handleNoSuchElementFoundException(
+            NoSuchElementFoundException exception,
+            WebRequest request
+    ) {
+        return buildErrorResponse(
+                exception,
+                HttpStatus.BAD_REQUEST,
+                request
+        );
+    }
+
     @ExceptionHandler(RuntimeException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<Object> handleAllUncaughtException(
@@ -46,7 +58,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
     }
 
-    //Todo this method is receiving all calls !!!
     @Override
     public ResponseEntity<Object> handleExceptionInternal(
             Exception ex,
@@ -63,6 +74,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatus httpStatus,
             WebRequest request
     ) {
-        return ResponseEntity.status(httpStatus).body(exception.getCause().getCause().getMessage());
+        return ResponseEntity.status(httpStatus).body(exception.getMessage());
     }
 }

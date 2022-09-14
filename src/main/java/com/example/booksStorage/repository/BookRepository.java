@@ -37,11 +37,12 @@ public class BookRepository {
 
     public Optional<Book> get(Long id) {
         String sql = "SELECT * FROM Books WHERE id = ?";
-        try {
-            return Optional.ofNullable(jdbcTemplate.queryForObject(sql, rowMapper, id));
-        } catch (EmptyResultDataAccessException e) {
+        List<Book> books = jdbcTemplate.query(sql, rowMapper, id);
+
+        if (books.isEmpty())
             return Optional.empty();
-        }
+        else
+            return books.stream().findFirst();
     }
 
     public List<Book> getAll() {
