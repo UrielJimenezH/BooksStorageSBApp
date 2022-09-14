@@ -61,9 +61,9 @@ Content-Type: application/json
   "edition": "First edition"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Book with id 23 does not exist
@@ -128,9 +128,9 @@ Content-Type: application/json
   "edition": "First edition"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Book with id 23 does not exist
@@ -168,9 +168,9 @@ Content-Type: application/json
   "edition": "First edition"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Book with id 23 does not exist
@@ -245,9 +245,9 @@ Content-Type: application/json
   "publisher": "People"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Magazine with id 23 does not exist
@@ -308,9 +308,9 @@ Content-Type: application/json
   "publisher": "People"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Magazine with id 23 does not exist
@@ -346,9 +346,9 @@ Content-Type: application/json
   "publisher": "People"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Magazine with id 23 does not exist
@@ -423,9 +423,9 @@ Content-Type: application/json
   "publisher": "Occidental"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Newspaper with id 23 does not exist
@@ -486,9 +486,9 @@ Content-Type: application/json
   "publisher": "Occidental"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Newspaper with id 23 does not exist
@@ -524,9 +524,9 @@ Content-Type: application/json
   "publisher": "Occidental"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Newspaper with id 23 does not exist
@@ -599,9 +599,9 @@ Content-Type: application/json
   "author": "Carlos Perez"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Letter with id 23 does not exist
@@ -660,9 +660,9 @@ Content-Type: application/json
   "author": "Carlos Perez"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Letter with id 23 does not exist
@@ -697,9 +697,9 @@ Content-Type: application/json
   "author": "Carlos Perez"
 }
 ```
-###### not_found
+###### bad_request
 ```text
-HTTP 404
+HTTP 400
 Content-Length: 0
 Body: {
     Letter with id 23 does not exist
